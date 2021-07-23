@@ -1,8 +1,9 @@
+// @ts-ignore
 import Client from "../database"
 
 export type Order = {
   id: number;
-  products: number[];
+  orderProducts: number[];
   quantity: number[];
   userId: number;
   status: boolean;
@@ -11,6 +12,7 @@ export type Order = {
 export class OrderStore {
   async index (): Promise<Order[]> {
     try {
+      // @ts-ignore
       const conn = await Client.connect()
       const sql = "SELECT * FROM orders"
 
@@ -24,9 +26,10 @@ export class OrderStore {
     }
   }
 
-  async show (id: string): Promise<Order> {
+  async show (id: number): Promise<Order> {
     try {
       const sql = "SELECT * FROM orders WHERE id=($1)"
+      // @ts-ignore
       const conn = await Client.connect()
       const {rows} = await conn.query(sql, [id])
 
@@ -39,12 +42,13 @@ export class OrderStore {
   }
 
   async add (order: Order): Promise<Order> {
-    const {products, quantity, status, userId} = order
+    const {orderProducts, quantity, status, userId} = order
 
     try {
-      const sql = "INSERT INTO orders (products, quantities, userid, status) VALUES($1, $2, $3, $4) RETURNING *"
+      const sql = "INSERT INTO orders (order_products, quantities, user_id, status) VALUES($1, $2, $3, $4) RETURNING *"
+      // @ts-ignore
       const conn = await Client.connect()
-      const {rows} = await conn.query(sql, [products, quantity, status, userId])
+      const {rows} = await conn.query(sql, [orderProducts, quantity, status, userId])
 
       conn.release()
 
@@ -54,9 +58,10 @@ export class OrderStore {
     }
   }
 
-  async delete (id: string): Promise<Order> {
+  async delete (id: number): Promise<Order> {
     try {
       const sql = "DELETE FROM orders WHERE id=($1)"
+      // @ts-ignore
       const conn = await Client.connect()
       const {rows} = await conn.query(sql, [id])
 

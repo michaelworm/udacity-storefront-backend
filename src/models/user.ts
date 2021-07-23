@@ -1,3 +1,4 @@
+// @ts-ignore
 import Client from "../database"
 
 export type User = {
@@ -10,6 +11,7 @@ export type User = {
 export class UserStore {
   async index (): Promise<User[]> {
     try {
+      // @ts-ignore
       const conn = await Client.connect()
       const sql = "SELECT * FROM users"
 
@@ -23,9 +25,10 @@ export class UserStore {
     }
   }
 
-  async show (id: string): Promise<User> {
+  async show (id: number): Promise<User> {
     try {
       const sql = "SELECT * FROM users WHERE id=($1)"
+      // @ts-ignore
       const conn = await Client.connect()
       const {rows} = await conn.query(sql, [id])
 
@@ -42,6 +45,7 @@ export class UserStore {
 
     try {
       const sql = "INSERT INTO users (firstname, lastname, password) VALUES($1, $2, $3) RETURNING *"
+      // @ts-ignore
       const conn = await Client.connect()
       const {rows} = await conn.query(sql, [firstName, lastName, password])
 
@@ -53,9 +57,10 @@ export class UserStore {
     }
   }
 
-  async delete (id: string): Promise<User> {
+  async delete (id: number): Promise<User> {
     try {
       const sql = "DELETE FROM users WHERE id=($1)"
+      // @ts-ignore
       const conn = await Client.connect()
       const {rows} = await conn.query(sql, [id])
 
