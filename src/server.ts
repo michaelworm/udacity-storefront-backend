@@ -2,7 +2,7 @@ import express, {Application, Request, Response} from "express"
 import bodyParser from "body-parser"
 
 const app: Application = express()
-const address: string = "0.0.0.0:3000"
+const address: string = "127.0.0.1:3000"
 
 app.use(bodyParser.json())
 

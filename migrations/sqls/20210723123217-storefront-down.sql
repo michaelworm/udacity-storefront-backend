@@ -1,0 +1,3 @@
+DROP DATABASE users;
+DROP DATABASE products;
+DROP DATABASE orders;

@@ -38,7 +38,7 @@ Table: *users*
 #### Orders
 Table: *orders*
 - id `SERIAL PRIMARY KEY`
-- id of each product in the order `INT` `FOREIGN KEY(products)`
-- quantity of each product in the order `INT`
+- id of each product in the order `INT[]`
+- quantity of each product in the order `INT[]`
 - user_id `INT` `FOREIGN KEY(users)`
 - status of order (active or complete) `BIT`
