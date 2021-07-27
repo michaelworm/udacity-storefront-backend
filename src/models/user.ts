@@ -1,7 +1,13 @@
 // @ts-ignore
 import Client from "../database"
 
-export type User = {
+export interface AddUser {
+  firstname: string;
+  lastname: string;
+  password: string;
+}
+
+export interface ReadUser {
   id: number;
   firstname: string;
   lastname: string;
@@ -9,7 +15,7 @@ export type User = {
 }
 
 export class UserStore {
-  async index (): Promise<User[]> {
+  async index (): Promise<ReadUser[]> {
     try {
       // @ts-ignore
       const conn = await Client.connect()
@@ -25,7 +31,7 @@ export class UserStore {
     }
   }
 
-  async show (id: number): Promise<User> {
+  async read (id: number): Promise<ReadUser> {
     try {
       const sql = "SELECT * FROM users WHERE id=($1)"
       // @ts-ignore
@@ -40,7 +46,7 @@ export class UserStore {
     }
   }
 
-  async add (user: User): Promise<User> {
+  async create (user: AddUser): Promise<ReadUser> {
     const {firstname, lastname, password} = user
 
     try {
@@ -57,7 +63,7 @@ export class UserStore {
     }
   }
 
-  async delete (id: number): Promise<User> {
+  async remove (id: number): Promise<ReadUser> {
     try {
       const sql = "DELETE FROM users WHERE id=($1)"
       // @ts-ignore

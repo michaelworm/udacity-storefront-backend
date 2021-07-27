@@ -1,14 +1,19 @@
 // @ts-ignore
 import Client from "../database"
 
-export type Product = {
+export interface ReadProduct {
   id: number;
   name: string;
   price: number;
 }
 
+export interface AddProduct {
+  name: string;
+  price: number;
+}
+
 export class ProductStore {
-  async index (): Promise<Product[]> {
+  async index (): Promise<ReadProduct[]> {
     try {
       // @ts-ignore
       const conn = await Client.connect()
@@ -24,7 +29,7 @@ export class ProductStore {
     }
   }
 
-  async show (id: number): Promise<Product> {
+  async read (id: number): Promise<ReadProduct> {
     try {
       const sql = "SELECT * FROM products WHERE id=($1)"
       // @ts-ignore
@@ -39,7 +44,7 @@ export class ProductStore {
     }
   }
 
-  async add (product: Product): Promise<Product> {
+  async create (product: AddProduct): Promise<ReadProduct> {
     const {name, price} = product
 
     try {
@@ -56,7 +61,7 @@ export class ProductStore {
     }
   }
 
-  async delete (id: number): Promise<Product> {
+  async remove (id: number): Promise<ReadProduct> {
     try {
       const sql = "DELETE FROM products WHERE id=($1)"
       // @ts-ignore

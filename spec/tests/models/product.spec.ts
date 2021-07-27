@@ -1,12 +1,19 @@
-import {Product, ProductStore} from "../../../src/models/product"
+import {AddProduct, ReadProduct, ProductStore} from "../../../src/models/product"
 
 const ProductStoreInstance = new ProductStore()
 
 describe("Product Model", () => {
-  const product: Product = {
-    id: 1,
+  const product: AddProduct = {
     name: "CodeMaster 3000",
     price: 2000
+  }
+
+  async function createProduct (product: AddProduct) {
+    return ProductStoreInstance.create(product)
+  }
+
+  async function removeProduct (id: number) {
+    return ProductStoreInstance.remove(id)
   }
 
   it("should have an index method", () => {
@@ -14,36 +21,53 @@ describe("Product Model", () => {
   })
 
   it("should have a show method", () => {
-    expect(ProductStoreInstance.show).toBeDefined()
+    expect(ProductStoreInstance.read).toBeDefined()
   })
 
   it("should have a add method", () => {
-    expect(ProductStoreInstance.add).toBeDefined()
+    expect(ProductStoreInstance.create).toBeDefined()
   })
 
   it("should have a delete method", () => {
-    expect(ProductStoreInstance.delete).toBeDefined()
+    expect(ProductStoreInstance.remove).toBeDefined()
   })
 
   it("add method should add a product", async () => {
-    const result = await ProductStoreInstance.add(product)
-    expect(result).toEqual(product)
+    const createdProduct: ReadProduct = await createProduct(product)
+
+    expect(createdProduct).toEqual({
+      id: createdProduct.id,
+      ...product
+    })
+
+    await removeProduct(createdProduct.id)
   })
 
   it("index method should return a list of products", async () => {
-    const result = await ProductStoreInstance.index()
-    expect(result).toEqual([product])
+    const createdProduct: ReadProduct = await createProduct(product)
+    const productList = await ProductStoreInstance.index()
+
+    expect(productList).toEqual([createdProduct])
+
+    await removeProduct(createdProduct.id)
   })
 
   it("show method should return the correct product", async () => {
-    const result = await ProductStoreInstance.show(1)
-    expect(result).toEqual(product)
+    const createdProduct: ReadProduct = await createProduct(product)
+    const productFromDb = await ProductStoreInstance.read(createdProduct.id)
+
+    expect(productFromDb).toEqual(createdProduct)
+
+    await removeProduct(createdProduct.id)
   })
 
   it("delete method should remove the product", async () => {
-    await ProductStoreInstance.delete(1)
-    const result = await ProductStoreInstance.index()
+    const createdProduct: ReadProduct = await createProduct(product)
 
-    expect(result).toEqual([])
+    await removeProduct(createdProduct.id)
+
+    const productList = await ProductStoreInstance.index()
+
+    expect(productList).toEqual([])
   })
 })

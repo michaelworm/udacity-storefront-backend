@@ -1,6 +1,6 @@
-import {Order, OrderStore} from "../../../src/models/order"
-import {User, UserStore} from "../../../src/models/user"
-import {Product, ProductStore} from "../../../src/models/product"
+import {AddOrder, ReadOrder, OrderStore} from "../../../src/models/order"
+import {ReadUser, UserStore} from "../../../src/models/user"
+import {ReadProduct, ProductStore} from "../../../src/models/product"
 
 const OrderStoreInstance = new OrderStore()
 
@@ -8,12 +8,18 @@ describe("Order Model", () => {
   const UserStoreInstance = new UserStore()
   const ProductStoreInstance = new ProductStore()
 
-  let order: Order, user_id: number, product_id: number
+  let order: AddOrder, user_id: number, product_id: number
+
+  async function createOrder (order: AddOrder) {
+    return OrderStoreInstance.create(order)
+  }
+
+  async function removeOrder (id: number) {
+    return OrderStoreInstance.remove(id)
+  }
 
   beforeAll(async () => {
-
-    const user: User = await UserStoreInstance.add({
-      id: 1,
+    const user: ReadUser = await UserStoreInstance.create({
       firstname: "Hans",
       lastname: "Meier",
       password: "password123"
@@ -21,8 +27,7 @@ describe("Order Model", () => {
 
     user_id = user.id
 
-    const product: Product = await ProductStoreInstance.add({
-      id: 1,
+    const product: ReadProduct = await ProductStoreInstance.create({
       name: "OrderSpec Product",
       price: 99
     })
@@ -30,7 +35,6 @@ describe("Order Model", () => {
     product_id = product.id
 
     order = {
-      id: 1,
       order_products: [product_id],
       quantity: [5],
       user_id,
@@ -39,8 +43,8 @@ describe("Order Model", () => {
   })
 
   afterAll(async () => {
-    await UserStoreInstance.delete(user_id)
-    await ProductStoreInstance.delete(product_id)
+    await UserStoreInstance.remove(user_id)
+    await ProductStoreInstance.remove(product_id)
   })
 
   it("should have an index method", () => {
@@ -48,36 +52,53 @@ describe("Order Model", () => {
   })
 
   it("should have a show method", () => {
-    expect(OrderStoreInstance.show).toBeDefined()
+    expect(OrderStoreInstance.read).toBeDefined()
   })
 
   it("should have a add method", () => {
-    expect(OrderStoreInstance.add).toBeDefined()
+    expect(OrderStoreInstance.create).toBeDefined()
   })
 
   it("should have a delete method", () => {
-    expect(OrderStoreInstance.delete).toBeDefined()
+    expect(OrderStoreInstance.remove).toBeDefined()
   })
 
   it("add method should add a order", async () => {
-    const result = await OrderStoreInstance.add(order)
-    expect(result).toEqual(order)
+    const createdOrder: ReadOrder = await createOrder(order)
+
+    expect(createdOrder).toEqual({
+      id: createdOrder.id,
+      ...order
+    })
+
+    await removeOrder(createdOrder.id)
   })
 
   it("index method should return a list of orders", async () => {
-    const result = await OrderStoreInstance.index()
-    expect(result).toEqual([order])
+    const createdOrder: ReadOrder = await createOrder(order)
+    const orderList = await OrderStoreInstance.index()
+
+    expect(orderList).toEqual([createdOrder])
+
+    await removeOrder(createdOrder.id)
   })
 
   it("show method should return the correct orders", async () => {
-    const result = await OrderStoreInstance.show(1)
-    expect(result).toEqual(order)
+    const createdOrder: ReadOrder = await createOrder(order)
+    const orderFromDb = await OrderStoreInstance.read(createdOrder.id)
+
+    expect(orderFromDb).toEqual(createdOrder)
+
+    await removeOrder(createdOrder.id)
   })
 
   it("delete method should remove the order", async () => {
-    await OrderStoreInstance.delete(1)
-    const result = await OrderStoreInstance.index()
+    const createdOrder: ReadOrder = await createOrder(order)
 
-    expect(result).toEqual([])
+    await removeOrder(createdOrder.id)
+
+    const orderList = await OrderStoreInstance.index()
+
+    expect(orderList).toEqual([])
   })
 })
