@@ -48,7 +48,8 @@ export class OrderStore {
       const sql = "INSERT INTO orders (order_products, quantities, user_id, status) VALUES($1, $2, $3, $4) RETURNING *"
       // @ts-ignore
       const conn = await Client.connect()
-      const {rows} = await conn.query(sql, [orderProducts, quantity, status, userId])
+      const integerStatus = status ? 1 : 0
+      const {rows} = await conn.query(sql, [orderProducts, quantity, integerStatus, userId])
 
       conn.release()
 
