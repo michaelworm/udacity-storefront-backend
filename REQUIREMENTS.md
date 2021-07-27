@@ -17,7 +17,7 @@ These are the notes from a meeting with the frontend developer that describe wha
 - Create `/users/add` [POST] [token required]
 
 #### Orders
-- Current Orders by user (args: user id) `/orders/:userId` [GET] [token required]
+- Current Orders by user (args: user id) `/orders/:user_id` [GET] [token required]
 - [OPTIONAL] Completed Orders by user (args: user id)[token required]
 
 ## Data Shapes
@@ -31,8 +31,8 @@ Table: *products*
 #### User
 Table: *users*
 - id `SERIAL PRIMARY KEY`
-- firstName `VARCHAR`
-- lastName `VARCHAR`
+- firstname `VARCHAR`
+- lastname `VARCHAR`
 - password `VARCHAR`
 
 #### Orders

@@ -20,7 +20,7 @@ export class ProductStore {
 
       return result.rows
     } catch (err) {
-      throw new Error(`Could not get products. Error: ${err}`)
+      throw new Error(`Could not get products. ${err}`)
     }
   }
 
@@ -35,7 +35,7 @@ export class ProductStore {
 
       return rows[0]
     } catch (err) {
-      throw new Error(`Could not find product ${id}. Error: ${err}`)
+      throw new Error(`Could not find product ${id}. ${err}`)
     }
   }
 
@@ -52,7 +52,7 @@ export class ProductStore {
 
       return rows[0]
     } catch (err) {
-      throw new Error(`Could not add new product ${name}. Error: ${err}`)
+      throw new Error(`Could not add new product ${name}. ${err}`)
     }
   }
 
@@ -67,7 +67,7 @@ export class ProductStore {
 
       return rows[0]
     } catch (err) {
-      throw new Error(`Could not delete product ${id}. Error: ${err}`)
+      throw new Error(`Could not delete product ${id}. ${err}`)
     }
   }
 }

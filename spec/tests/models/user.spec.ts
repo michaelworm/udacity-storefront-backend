@@ -1,49 +1,49 @@
 import {User, UserStore} from "../../../src/models/user"
 
-const store = new UserStore()
+const UserStoreInstance = new UserStore()
 
 describe("User Model", () => {
   const user: User = {
     id: 1,
-    firstName: "Hans",
-    lastName: "Meier",
+    firstname: "Hans",
+    lastname: "Meier",
     password: "password123"
   }
 
   it("should have an index method", () => {
-    expect(store.index).toBeDefined()
+    expect(UserStoreInstance.index).toBeDefined()
   })
 
   it("should have a show method", () => {
-    expect(store.show).toBeDefined()
+    expect(UserStoreInstance.show).toBeDefined()
   })
 
   it("should have a add method", () => {
-    expect(store.add).toBeDefined()
+    expect(UserStoreInstance.add).toBeDefined()
   })
 
   it("should have a delete method", () => {
-    expect(store.delete).toBeDefined()
+    expect(UserStoreInstance.delete).toBeDefined()
   })
 
   it("add method should add a user", async () => {
-    const result = await store.add(user)
+    const result = await UserStoreInstance.add(user)
     expect(result).toEqual(user)
   })
 
   it("index method should return a list of users", async () => {
-    const result = await store.index()
+    const result = await UserStoreInstance.index()
     expect(result).toEqual([user])
   })
 
   it("show method should return the correct users", async () => {
-    const result = await store.show(1)
+    const result = await UserStoreInstance.show(1)
     expect(result).toEqual(user)
   })
 
   it("delete method should remove the user", async () => {
-    await store.delete(1)
-    const result = await store.index()
+    await UserStoreInstance.delete(1)
+    const result = await UserStoreInstance.index()
 
     expect(result).toEqual([])
   })

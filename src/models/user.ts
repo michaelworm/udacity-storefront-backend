@@ -3,8 +3,8 @@ import Client from "../database"
 
 export type User = {
   id: number;
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
   password: string;
 }
 
@@ -21,7 +21,7 @@ export class UserStore {
 
       return result.rows
     } catch (err) {
-      throw new Error(`Could not get users. Error: ${err}`)
+      throw new Error(`Could not get users. ${err}`)
     }
   }
 
@@ -36,24 +36,24 @@ export class UserStore {
 
       return rows[0]
     } catch (err) {
-      throw new Error(`Could not find user ${id}. Error: ${err}`)
+      throw new Error(`Could not find user ${id}. ${err}`)
     }
   }
 
   async add (user: User): Promise<User> {
-    const {firstName, lastName, password} = user
+    const {firstname, lastname, password} = user
 
     try {
       const sql = "INSERT INTO users (firstname, lastname, password) VALUES($1, $2, $3) RETURNING *"
       // @ts-ignore
       const conn = await Client.connect()
-      const {rows} = await conn.query(sql, [firstName, lastName, password])
+      const {rows} = await conn.query(sql, [firstname, lastname, password])
 
       conn.release()
 
       return rows[0]
     } catch (err) {
-      throw new Error(`Could not add new user ${firstName} ${lastName}. Error: ${err}`)
+      throw new Error(`Could not add new user ${firstname} ${lastname}. ${err}`)
     }
   }
 
@@ -68,7 +68,7 @@ export class UserStore {
 
       return rows[0]
     } catch (err) {
-      throw new Error(`Could not delete user ${id}. Error: ${err}`)
+      throw new Error(`Could not delete user ${id}. ${err}`)
     }
   }
 }

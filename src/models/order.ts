@@ -3,9 +3,9 @@ import Client from "../database"
 
 export type Order = {
   id: number;
-  orderProducts: number[];
+  order_products: number[];
   quantity: number[];
-  userId: number;
+  user_id: number;
   status: boolean;
 }
 
@@ -22,7 +22,7 @@ export class OrderStore {
 
       return result.rows
     } catch (err) {
-      throw new Error(`Could not get orders. Error: ${err}`)
+      throw new Error(`Could not get orders. ${err}`)
     }
   }
 
@@ -37,25 +37,24 @@ export class OrderStore {
 
       return rows[0]
     } catch (err) {
-      throw new Error(`Could not find order ${id}. Error: ${err}`)
+      throw new Error(`Could not find order ${id}. ${err}`)
     }
   }
 
   async add (order: Order): Promise<Order> {
-    const {orderProducts, quantity, status, userId} = order
+    const {order_products, quantity, status, user_id} = order
 
     try {
-      const sql = "INSERT INTO orders (order_products, quantities, user_id, status) VALUES($1, $2, $3, $4) RETURNING *"
+      const sql = "INSERT INTO orders (order_products, quantity, user_id, status) VALUES($1, $2, $3, $4) RETURNING *"
       // @ts-ignore
       const conn = await Client.connect()
-      const integerStatus = status ? 1 : 0
-      const {rows} = await conn.query(sql, [orderProducts, quantity, integerStatus, userId])
+      const {rows} = await conn.query(sql, [order_products, quantity, user_id, status])
 
       conn.release()
 
       return rows[0]
     } catch (err) {
-      throw new Error(`Could not add new order for user ${userId}. Error: ${err}`)
+      throw new Error(`Could not add new order for user ${user_id}. ${err}`)
     }
   }
 
@@ -70,7 +69,7 @@ export class OrderStore {
 
       return rows[0]
     } catch (err) {
-      throw new Error(`Could not delete order ${id}. Error: ${err}`)
+      throw new Error(`Could not delete order ${id}. ${err}`)
     }
   }
 }

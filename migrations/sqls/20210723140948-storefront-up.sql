@@ -6,15 +6,15 @@ CREATE TABLE products (
 
 CREATE TABLE users (
   id        SERIAL PRIMARY KEY,
-  firstName VARCHAR(250),
-  lastName  VARCHAR(250),
+  firstname VARCHAR(250),
+  lastname  VARCHAR(250),
   password  VARCHAR(24)
 );
 
 CREATE TABLE orders (
   id             SERIAL PRIMARY KEY,
   order_products INTEGER[],
-  quantities     INTEGER[],
+  quantity       INTEGER[],
   user_id        INTEGER REFERENCES users (id),
-  status         BIT
+  status         BOOLEAN
 );

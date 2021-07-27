@@ -1,6 +1,6 @@
 import {Product, ProductStore} from "../../../src/models/product"
 
-const store = new ProductStore()
+const ProductStoreInstance = new ProductStore()
 
 describe("Product Model", () => {
   const product: Product = {
@@ -10,39 +10,39 @@ describe("Product Model", () => {
   }
 
   it("should have an index method", () => {
-    expect(store.index).toBeDefined()
+    expect(ProductStoreInstance.index).toBeDefined()
   })
 
   it("should have a show method", () => {
-    expect(store.show).toBeDefined()
+    expect(ProductStoreInstance.show).toBeDefined()
   })
 
   it("should have a add method", () => {
-    expect(store.add).toBeDefined()
+    expect(ProductStoreInstance.add).toBeDefined()
   })
 
   it("should have a delete method", () => {
-    expect(store.delete).toBeDefined()
+    expect(ProductStoreInstance.delete).toBeDefined()
   })
 
   it("add method should add a product", async () => {
-    const result = await store.add(product)
+    const result = await ProductStoreInstance.add(product)
     expect(result).toEqual(product)
   })
 
   it("index method should return a list of products", async () => {
-    const result = await store.index()
+    const result = await ProductStoreInstance.index()
     expect(result).toEqual([product])
   })
 
   it("show method should return the correct product", async () => {
-    const result = await store.show(1)
+    const result = await ProductStoreInstance.show(1)
     expect(result).toEqual(product)
   })
 
   it("delete method should remove the product", async () => {
-    await store.delete(1)
-    const result = await store.index()
+    await ProductStoreInstance.delete(1)
+    const result = await ProductStoreInstance.index()
 
     expect(result).toEqual([])
   })
