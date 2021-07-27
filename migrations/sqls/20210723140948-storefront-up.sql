@@ -12,9 +12,9 @@ CREATE TABLE users (
 );
 
 CREATE TABLE orders (
-  id             SERIAL PRIMARY KEY,
-  order_products INTEGER[],
-  quantity       INTEGER[],
-  user_id        INTEGER REFERENCES users (id),
-  status         BOOLEAN
+  id           SERIAL PRIMARY KEY,
+  product_list INTEGER[],
+  quantity     INTEGER[],
+  user_id      INTEGER REFERENCES users (id),
+  status       BOOLEAN
 );

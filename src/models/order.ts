@@ -2,18 +2,14 @@
 import Client from "../database"
 
 export interface AddOrder {
-  order_products: number[];
+  product_list: number[];
   quantity: number[];
   user_id: number;
   status: boolean;
 }
 
-export interface ReadOrder {
+export interface ReadOrder extends AddOrder {
   id: number;
-  order_products: number[];
-  quantity: number[];
-  user_id: number;
-  status: boolean;
 }
 
 export class OrderStore {
@@ -49,13 +45,13 @@ export class OrderStore {
   }
 
   async create (order: AddOrder): Promise<ReadOrder> {
-    const {order_products, quantity, status, user_id} = order
+    const {product_list, quantity, status, user_id} = order
 
     try {
-      const sql = "INSERT INTO orders (order_products, quantity, user_id, status) VALUES($1, $2, $3, $4) RETURNING *"
+      const sql = "INSERT INTO orders (product_list, quantity, user_id, status) VALUES($1, $2, $3, $4) RETURNING *"
       // @ts-ignore
       const conn = await Client.connect()
-      const {rows} = await conn.query(sql, [order_products, quantity, user_id, status])
+      const {rows} = await conn.query(sql, [product_list, quantity, user_id, status])
 
       conn.release()
 

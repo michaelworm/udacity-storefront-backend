@@ -1,15 +1,13 @@
 // @ts-ignore
 import Client from "../database"
 
-export interface ReadProduct {
-  id: number;
+export interface AddProduct {
   name: string;
   price: number;
 }
 
-export interface AddProduct {
-  name: string;
-  price: number;
+export interface ReadProduct extends AddProduct {
+  id: number;
 }
 
 export class ProductStore {

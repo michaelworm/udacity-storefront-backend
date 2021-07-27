@@ -1,4 +1,4 @@
-import {AddUser, ReadUser, UserStore} from "../../../src/models/user"
+import {AddUser, ReadUser, UserStore} from "../../src/models/user"
 
 const UserStoreInstance = new UserStore()
 

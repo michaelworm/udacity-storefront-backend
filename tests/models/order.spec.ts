@@ -1,6 +1,6 @@
-import {AddOrder, ReadOrder, OrderStore} from "../../../src/models/order"
-import {ReadUser, UserStore} from "../../../src/models/user"
-import {ReadProduct, ProductStore} from "../../../src/models/product"
+import {AddOrder, ReadOrder, OrderStore} from "../../src/models/order"
+import {ReadUser, UserStore} from "../../src/models/user"
+import {ReadProduct, ProductStore} from "../../src/models/product"
 
 const OrderStoreInstance = new OrderStore()
 
@@ -35,7 +35,7 @@ describe("Order Model", () => {
     product_id = product.id
 
     order = {
-      order_products: [product_id],
+      product_list: [product_id],
       quantity: [5],
       user_id,
       status: true

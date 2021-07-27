@@ -7,11 +7,8 @@ export interface AddUser {
   password: string;
 }
 
-export interface ReadUser {
+export interface ReadUser extends AddUser {
   id: number;
-  firstname: string;
-  lastname: string;
-  password: string;
 }
 
 export class UserStore {

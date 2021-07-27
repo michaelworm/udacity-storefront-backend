@@ -1,4 +1,4 @@
-import {AddProduct, ReadProduct, ProductStore} from "../../../src/models/product"
+import {AddProduct, ReadProduct, ProductStore} from "../../src/models/product"
 
 const ProductStoreInstance = new ProductStore()
 

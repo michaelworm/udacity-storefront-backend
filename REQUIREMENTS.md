@@ -6,15 +6,15 @@ These are the notes from a meeting with the frontend developer that describe wha
 ## API Endpoints
 #### Products
 - Index `/products` [GET]
-- Show `/products/:id` [GET]
-- Create `/products/add` [POST] [token required]
+- Read `/products/:id` [GET]
+- Create `/products/create` [POST] [token required]
 - [OPTIONAL] Top 5 most popular products 
 - [OPTIONAL] Products by category (args: product category)
 
 #### Users
 - Index `/users` [GET] [token required]
-- Show `/users/:id` [GET] [token required]
-- Create `/users/add` [POST] [token required]
+- Read `/users/:id` [GET] [token required]
+- Create `/users/create` [POST] [token required]
 
 #### Orders
 - Current Orders by user (args: user id) `/orders/:user_id` [GET] [token required]
@@ -25,7 +25,7 @@ These are the notes from a meeting with the frontend developer that describe wha
 Table: *products*
 - id `SERIAL PRIMARY KEY`
 - name `VARCHAR`
-- price `INT`
+- price `INTEGER`
 - [OPTIONAL] category
 
 #### User
@@ -38,7 +38,7 @@ Table: *users*
 #### Orders
 Table: *orders*
 - id `SERIAL PRIMARY KEY`
-- id of each product in the order `INT[]`
-- quantity of each product in the order `INT[]`
-- user_id `INT` `FOREIGN KEY(users)`
-- status of order (active or complete) `BIT`
+- product_list `INTEGER[]`
+- quantity `INTEGER[]`
+- user_id `INTEGER`
+- status `BOOLEAN`
