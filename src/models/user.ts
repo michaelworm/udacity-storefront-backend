@@ -64,8 +64,7 @@ export class UserStore {
     }
   }
 
-  async update (user: User, newUserData: BaseUser): Promise<User> {
-    const {id} = user
+  async update (id: number, newUserData: BaseUser): Promise<User> {
     const {firstname, lastname} = newUserData
 
     try {

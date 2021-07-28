@@ -68,7 +68,7 @@ describe("Product Model", () => {
       price: 9999
     }
 
-    const {name, price} = await ProductStoreInstance.update(createdProduct, newProductData)
+    const {name, price} = await ProductStoreInstance.update(createdProduct.id, newProductData)
 
     expect(name).toEqual(newProductData.name)
     expect(price).toEqual(newProductData.price)

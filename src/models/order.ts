@@ -57,8 +57,7 @@ export class OrderStore {
     }
   }
 
-  async update (order: Order, newOrderData: BaseOrder): Promise<Order> {
-    const {id} = order
+  async update (id: number, newOrderData: BaseOrder): Promise<Order> {
     const {product_list, quantity, status, user_id} = newOrderData
 
     try {

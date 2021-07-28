@@ -83,7 +83,7 @@ describe("User Model", () => {
       lastname: "Meier",
     }
 
-    const {firstname, lastname} = await UserStoreInstance.update(createdUser, newUserData)
+    const {firstname, lastname} = await UserStoreInstance.update(createdUser.id, newUserData)
 
     expect(firstname).toEqual(newUserData.firstname)
     expect(lastname).toEqual(newUserData.lastname)

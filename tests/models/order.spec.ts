@@ -102,7 +102,7 @@ describe("Order Model", () => {
       status: false
     }
 
-    const {quantity, status} = await OrderStoreInstance.update(createdOrder, newOrderData)
+    const {quantity, status} = await OrderStoreInstance.update(createdOrder.id, newOrderData)
 
     expect(quantity).toEqual(newOrderData.quantity)
     expect(status).toEqual(newOrderData.status)

@@ -55,8 +55,7 @@ export class ProductStore {
     }
   }
 
-  async update (product: Product, newProductData: BaseProduct): Promise<Product> {
-    const {id} = product
+  async update (id: number, newProductData: BaseProduct): Promise<Product> {
     const {name: newName, price} = newProductData
 
     try {

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Udacity Storefront</title>
+</head>
+<body>
+  <h1>Welcome to the Udacity Storefront!</h1>
+  <p>The following routes are supported:</p>
+  <pre>
+    ### Products
+    - Index `/products` [GET]
+    - Read `/products/:id` [GET]
+    - Create `/products/create` [POST] [token required]
+    - Delete `/products/delete/:id` [POST] [token required]
+
+    #### Users
+    - Index `/users` [GET] [token required]
+    - Read `/users/:id` [GET] [token required]
+    - Create `/users/create` [POST] [token required]
+    - Delete `/users/delete/:id` [POST] [token required]
+    - Auth `/users/auth/:id` [POST] [token required]
+
+    #### Orders
+    - Index `/orders` [GET] [token required]
+    - Read `/orders/:id` [GET] [token required]
+    - Create `/orders/create` [POST] [token required]
+    - Delete `/orders/delete/:id` [POST] [token required]
+  </pre>
+</body>
+</html>
