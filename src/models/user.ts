@@ -4,13 +4,16 @@ import Client from "../database"
 const {BCRYPT_PASSWORD, SALT_ROUNDS} = process.env
 
 export interface BaseUser {
-  username: string;
   firstname: string;
   lastname: string;
-  password_digest: string;
 }
 
-export interface User extends BaseUser {
+export interface BaseAuthUser extends BaseUser {
+  username: string;
+  password: string;
+}
+
+export interface User extends BaseAuthUser {
   id: number;
 }
 
@@ -30,6 +33,23 @@ export class UserStore {
     }
   }
 
+  async create (user: BaseAuthUser): Promise<User> {
+    const {firstname, lastname, username, password} = user
+
+    try {
+      const sql = "INSERT INTO users (firstname, lastname, username, password_digest) VALUES($1, $2, $3, $4) RETURNING *"
+      const hash = hashSync(password + BCRYPT_PASSWORD, parseInt(SALT_ROUNDS as string, 10))
+      const connection = await Client.connect()
+      const {rows} = await connection.query(sql, [firstname, lastname, username, hash])
+
+      connection.release()
+
+      return rows[0]
+    } catch (err) {
+      throw new Error(`Could not add new user ${firstname} ${lastname}. ${err}`)
+    }
+  }
+
   async read (id: number): Promise<User> {
     try {
       const sql = "SELECT * FROM users WHERE id=($1)"
@@ -44,38 +64,39 @@ export class UserStore {
     }
   }
 
-  async create (user: BaseUser): Promise<User> {
-    const {firstname, lastname, username, password_digest} = user
+  async update (user: User, newUserData: BaseUser): Promise<User> {
+    const {id} = user
+    const {firstname, lastname} = newUserData
 
     try {
-      const sql = "INSERT INTO users (firstname, lastname, username, password_digest) VALUES($1, $2, $3, $4) RETURNING *"
-      const hash = hashSync(password_digest + BCRYPT_PASSWORD, parseInt(SALT_ROUNDS as string, 10))
+      const sql = "UPDATE users SET firstname = $1, lastname = $2 WHERE id = $3 RETURNING *"
       const connection = await Client.connect()
-      const {rows} = await connection.query(sql, [firstname, lastname, username, hash])
+      const {rows} = await connection.query(sql, [firstname, lastname, id])
 
       connection.release()
 
       return rows[0]
     } catch (err) {
-      throw new Error(`Could not add new user ${firstname} ${lastname}. ${err}`)
+      throw new Error(`Could not update user ${firstname} ${lastname}. ${err}`)
     }
   }
 
-  async remove (id: number): Promise<User> {
+  async deleteUser (id: number): Promise<boolean> {
     try {
       const sql = "DELETE FROM users WHERE id=($1)"
       const connection = await Client.connect()
-      const {rows} = await connection.query(sql, [id])
+
+      await connection.query(sql, [id])
 
       connection.release()
 
-      return rows[0]
+      return true
     } catch (err) {
       throw new Error(`Could not delete user ${id}. ${err}`)
     }
   }
 
-  async authenticate (username: string, password_digest: string): Promise<User | null> {
+  async authenticate (username: string, password: string): Promise<User | null> {
     try {
       const sql = "SELECT * FROM users WHERE username=($1)"
       const connection = await Client.connect()
@@ -84,7 +105,7 @@ export class UserStore {
       if (rows.length > 0) {
         const user = rows[0]
 
-        if (compareSync(password_digest + BCRYPT_PASSWORD, user.password_digest)) {
+        if (compareSync(password + BCRYPT_PASSWORD, user.password_digest)) {
           return user
         }
       }

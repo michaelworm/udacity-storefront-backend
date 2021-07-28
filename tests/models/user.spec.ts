@@ -1,21 +1,21 @@
-import {BaseUser, User, UserStore} from "../../src/models/user"
+import {BaseAuthUser, BaseUser, User, UserStore} from "../../src/models/user"
 
 const UserStoreInstance = new UserStore()
 
 describe("User Model", () => {
-  const user: BaseUser = {
+  const user: BaseAuthUser = {
     username: "hansmeier",
     firstname: "Hans",
     lastname: "Meier",
-    password_digest: "password123"
+    password: "password123"
   }
 
-  async function createUser (user: BaseUser) {
+  async function createUser (user: BaseAuthUser) {
     return UserStoreInstance.create(user)
   }
 
-  async function removeUser (id: number) {
-    return UserStoreInstance.remove(id)
+  async function deleteUser (id: number) {
+    return UserStoreInstance.deleteUser(id)
   }
 
   it("should have an index method", () => {
@@ -31,7 +31,7 @@ describe("User Model", () => {
   })
 
   it("should have a remove method", () => {
-    expect(UserStoreInstance.remove).toBeDefined()
+    expect(UserStoreInstance.deleteUser).toBeDefined()
   })
 
   it("create method should create a user", async () => {
@@ -45,7 +45,7 @@ describe("User Model", () => {
       expect(lastname).toBe(user.lastname)
     }
 
-    await removeUser(createdUser.id)
+    await deleteUser(createdUser.id)
   })
 
   it("index method should return a list of users", async () => {
@@ -54,7 +54,7 @@ describe("User Model", () => {
 
     expect(userList).toEqual([createdUser])
 
-    await removeUser(createdUser.id)
+    await deleteUser(createdUser.id)
   })
 
   it("show method should return the correct users", async () => {
@@ -63,23 +63,38 @@ describe("User Model", () => {
 
     expect(userFromDb).toEqual(createdUser)
 
-    await removeUser(createdUser.id)
+    await deleteUser(createdUser.id)
   })
 
   it("remove method should remove the user", async () => {
     const createdUser: User = await createUser(user)
 
-    await removeUser(createdUser.id)
+    await deleteUser(createdUser.id)
 
     const userList = await UserStoreInstance.index()
 
     expect(userList).toEqual([])
   })
 
+  it("update method should update the user", async () => {
+    const createdUser: User = await createUser(user)
+    const newUserData: BaseUser = {
+      firstname: "Peter",
+      lastname: "Meier",
+    }
+
+    const {firstname, lastname} = await UserStoreInstance.update(createdUser, newUserData)
+
+    expect(firstname).toEqual(newUserData.firstname)
+    expect(lastname).toEqual(newUserData.lastname)
+
+    await deleteUser(createdUser.id)
+  })
+
   it("authenticates the user with a password", async () => {
     const createdUser: User = await createUser(user)
 
-    const userFromDb = await UserStoreInstance.authenticate(user.username, user.password_digest)
+    const userFromDb = await UserStoreInstance.authenticate(user.username, user.password)
 
     if (userFromDb) {
       const {username, firstname, lastname} = userFromDb
@@ -89,6 +104,6 @@ describe("User Model", () => {
       expect(lastname).toBe(user.lastname)
     }
 
-    await removeUser(createdUser.id)
+    await deleteUser(createdUser.id)
   })
 })

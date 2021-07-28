@@ -25,20 +25,6 @@ export class ProductStore {
     }
   }
 
-  async read (id: number): Promise<Product> {
-    try {
-      const sql = "SELECT * FROM products WHERE id=($1)"
-      const connection = await Client.connect()
-      const {rows} = await connection.query(sql, [id])
-
-      connection.release()
-
-      return rows[0]
-    } catch (err) {
-      throw new Error(`Could not find product ${id}. ${err}`)
-    }
-  }
-
   async create (product: BaseProduct): Promise<Product> {
     const {name, price} = product
 
@@ -55,7 +41,38 @@ export class ProductStore {
     }
   }
 
-  async remove (id: number): Promise<Product> {
+  async read (id: number): Promise<Product> {
+    try {
+      const sql = "SELECT * FROM products WHERE id=($1)"
+      const connection = await Client.connect()
+      const {rows} = await connection.query(sql, [id])
+
+      connection.release()
+
+      return rows[0]
+    } catch (err) {
+      throw new Error(`Could not find product ${id}. ${err}`)
+    }
+  }
+
+  async update (product: Product, newProductData: BaseProduct): Promise<Product> {
+    const {id} = product
+    const {name: newName, price} = newProductData
+
+    try {
+      const sql = "UPDATE products SET name = $1, price = $2 WHERE id = $3 RETURNING *"
+      const connection = await Client.connect()
+      const {rows} = await connection.query(sql, [newName, price, id])
+
+      connection.release()
+
+      return rows[0]
+    } catch (err) {
+      throw new Error(`Could not update product ${name}. ${err}`)
+    }
+  }
+
+  async deleteProduct (id: number): Promise<Product> {
     try {
       const sql = "DELETE FROM products WHERE id=($1)"
       const connection = await Client.connect()

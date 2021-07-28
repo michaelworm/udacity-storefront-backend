@@ -6,19 +6,25 @@ These are the notes from a meeting with the frontend developer that describe wha
 ## API Endpoints
 #### Products
 - Index `/products` [GET]
-- Read `/products/:id` [GET]
 - Create `/products/create` [POST] [token required]
-- [OPTIONAL] Top 5 most popular products 
-- [OPTIONAL] Products by category (args: product category)
+- Read `/products/:id` [GET]
+- Update `/products/:id` [PUT] [token required]
+- Delete `/products/:id` [DELETE] [token required]
 
 #### Users
 - Index `/users` [GET] [token required]
-- Read `/users/:id` [GET] [token required]
 - Create `/users/create` [POST] [token required]
+- Read `/users/:id` [GET] [token required]
+- Update `/users/:id` [PUT] [token required]
+- Delete `/users/:id` [DELETE] [token required]
+- Auth `/users/auth` [POST] [token required]
 
 #### Orders
-- Current Orders by user (args: user id) `/orders/:user_id` [GET] [token required]
-- [OPTIONAL] Completed Orders by user (args: user id)[token required]
+- Index `/orders` [GET] [token required]
+- Create `/orders/create` [POST] [token required]
+- Read `/orders/:id` [GET] [token required]
+- Update `/orders/:id` [PUT] [token required]
+- Delete `/orders/:id` [DELETE] [token required]
 
 ## Data Shapes
 #### Product
@@ -26,7 +32,6 @@ Table: *products*
 - id `SERIAL PRIMARY KEY`
 - name `VARCHAR`
 - price `INTEGER`
-- [OPTIONAL] category
 
 #### User
 Table: *users*

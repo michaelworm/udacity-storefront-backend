@@ -14,8 +14,8 @@ describe("Order Model", () => {
     return OrderStoreInstance.create(order)
   }
 
-  async function removeOrder (id: number) {
-    return OrderStoreInstance.remove(id)
+  async function deleteOrder (id: number) {
+    return OrderStoreInstance.deleteOrder(id)
   }
 
   beforeAll(async () => {
@@ -23,7 +23,7 @@ describe("Order Model", () => {
       username: "hansmeier",
       firstname: "Hans",
       lastname: "Meier",
-      password_digest: "password123"
+      password: "password123"
     })
 
     user_id = user.id
@@ -44,8 +44,8 @@ describe("Order Model", () => {
   })
 
   afterAll(async () => {
-    await UserStoreInstance.remove(user_id)
-    await ProductStoreInstance.remove(product_id)
+    await UserStoreInstance.deleteUser(user_id)
+    await ProductStoreInstance.deleteProduct(product_id)
   })
 
   it("should have an index method", () => {
@@ -61,7 +61,7 @@ describe("Order Model", () => {
   })
 
   it("should have a delete method", () => {
-    expect(OrderStoreInstance.remove).toBeDefined()
+    expect(OrderStoreInstance.deleteOrder).toBeDefined()
   })
 
   it("add method should add a order", async () => {
@@ -72,7 +72,7 @@ describe("Order Model", () => {
       ...order
     })
 
-    await removeOrder(createdOrder.id)
+    await deleteOrder(createdOrder.id)
   })
 
   it("index method should return a list of orders", async () => {
@@ -81,7 +81,7 @@ describe("Order Model", () => {
 
     expect(orderList).toEqual([createdOrder])
 
-    await removeOrder(createdOrder.id)
+    await deleteOrder(createdOrder.id)
   })
 
   it("show method should return the correct orders", async () => {
@@ -90,13 +90,30 @@ describe("Order Model", () => {
 
     expect(orderFromDb).toEqual(createdOrder)
 
-    await removeOrder(createdOrder.id)
+    await deleteOrder(createdOrder.id)
+  })
+
+  it("update method should update the order", async () => {
+    const createdOrder: Order = await createOrder(order)
+    const newOrderData: BaseOrder = {
+      product_list: [product_id],
+      quantity: [200],
+      user_id,
+      status: false
+    }
+
+    const {quantity, status} = await OrderStoreInstance.update(createdOrder, newOrderData)
+
+    expect(quantity).toEqual(newOrderData.quantity)
+    expect(status).toEqual(newOrderData.status)
+
+    await deleteOrder(createdOrder.id)
   })
 
   it("delete method should remove the order", async () => {
     const createdOrder: Order = await createOrder(order)
 
-    await removeOrder(createdOrder.id)
+    await deleteOrder(createdOrder.id)
 
     const orderList = await OrderStoreInstance.index()
 

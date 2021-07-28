@@ -12,8 +12,8 @@ describe("Product Model", () => {
     return ProductStoreInstance.create(product)
   }
 
-  async function removeProduct (id: number) {
-    return ProductStoreInstance.remove(id)
+  async function deleteProduct (id: number) {
+    return ProductStoreInstance.deleteProduct(id)
   }
 
   it("should have an index method", () => {
@@ -29,7 +29,7 @@ describe("Product Model", () => {
   })
 
   it("should have a delete method", () => {
-    expect(ProductStoreInstance.remove).toBeDefined()
+    expect(ProductStoreInstance.deleteProduct).toBeDefined()
   })
 
   it("add method should add a product", async () => {
@@ -40,7 +40,7 @@ describe("Product Model", () => {
       ...product
     })
 
-    await removeProduct(createdProduct.id)
+    await deleteProduct(createdProduct.id)
   })
 
   it("index method should return a list of products", async () => {
@@ -49,7 +49,7 @@ describe("Product Model", () => {
 
     expect(productList).toEqual([createdProduct])
 
-    await removeProduct(createdProduct.id)
+    await deleteProduct(createdProduct.id)
   })
 
   it("show method should return the correct product", async () => {
@@ -58,13 +58,28 @@ describe("Product Model", () => {
 
     expect(productFromDb).toEqual(createdProduct)
 
-    await removeProduct(createdProduct.id)
+    await deleteProduct(createdProduct.id)
+  })
+
+  it("update method should update the product", async () => {
+    const createdProduct: Product = await createProduct(product)
+    const newProductData: BaseProduct = {
+      name: "CodeMaster 9999",
+      price: 9999
+    }
+
+    const {name, price} = await ProductStoreInstance.update(createdProduct, newProductData)
+
+    expect(name).toEqual(newProductData.name)
+    expect(price).toEqual(newProductData.price)
+
+    await deleteProduct(createdProduct.id)
   })
 
   it("delete method should remove the product", async () => {
     const createdProduct: Product = await createProduct(product)
 
-    await removeProduct(createdProduct.id)
+    await deleteProduct(createdProduct.id)
 
     const productList = await ProductStoreInstance.index()
 

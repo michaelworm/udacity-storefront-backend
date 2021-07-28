@@ -27,20 +27,6 @@ export class OrderStore {
     }
   }
 
-  async read (id: number): Promise<Order> {
-    try {
-      const sql = "SELECT * FROM orders WHERE id=($1)"
-      const connection = await Client.connect()
-      const {rows} = await connection.query(sql, [id])
-
-      connection.release()
-
-      return rows[0]
-    } catch (err) {
-      throw new Error(`Could not find order ${id}. ${err}`)
-    }
-  }
-
   async create (order: BaseOrder): Promise<Order> {
     const {product_list, quantity, status, user_id} = order
 
@@ -57,7 +43,38 @@ export class OrderStore {
     }
   }
 
-  async remove (id: number): Promise<Order> {
+  async read (id: number): Promise<Order> {
+    try {
+      const sql = "SELECT * FROM orders WHERE id=($1)"
+      const connection = await Client.connect()
+      const {rows} = await connection.query(sql, [id])
+
+      connection.release()
+
+      return rows[0]
+    } catch (err) {
+      throw new Error(`Could not find order ${id}. ${err}`)
+    }
+  }
+
+  async update (order: Order, newOrderData: BaseOrder): Promise<Order> {
+    const {id} = order
+    const {product_list, quantity, status, user_id} = newOrderData
+
+    try {
+      const sql = "UPDATE orders SET product_list = $1, quantity = $2, user_id = $3, status = $4 WHERE id = $5 RETURNING *"
+      const connection = await Client.connect()
+      const {rows} = await connection.query(sql, [product_list, quantity, user_id, status, id])
+
+      connection.release()
+
+      return rows[0]
+    } catch (err) {
+      throw new Error(`Could not update order for user ${user_id}. ${err}`)
+    }
+  }
+
+  async deleteOrder (id: number): Promise<Order> {
     try {
       const sql = "DELETE FROM orders WHERE id=($1)"
       const connection = await Client.connect()
