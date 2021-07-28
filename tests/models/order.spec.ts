@@ -1,6 +1,6 @@
-import {AddOrder, ReadOrder, OrderStore} from "../../src/models/order"
-import {ReadUser, UserStore} from "../../src/models/user"
-import {ReadProduct, ProductStore} from "../../src/models/product"
+import {BaseOrder, Order, OrderStore} from "../../src/models/order"
+import {User, UserStore} from "../../src/models/user"
+import {Product, ProductStore} from "../../src/models/product"
 
 const OrderStoreInstance = new OrderStore()
 
@@ -8,9 +8,9 @@ describe("Order Model", () => {
   const UserStoreInstance = new UserStore()
   const ProductStoreInstance = new ProductStore()
 
-  let order: AddOrder, user_id: number, product_id: number
+  let order: BaseOrder, user_id: number, product_id: number
 
-  async function createOrder (order: AddOrder) {
+  async function createOrder (order: BaseOrder) {
     return OrderStoreInstance.create(order)
   }
 
@@ -19,15 +19,16 @@ describe("Order Model", () => {
   }
 
   beforeAll(async () => {
-    const user: ReadUser = await UserStoreInstance.create({
+    const user: User = await UserStoreInstance.create({
+      username: "hansmeier",
       firstname: "Hans",
       lastname: "Meier",
-      password: "password123"
+      password_digest: "password123"
     })
 
     user_id = user.id
 
-    const product: ReadProduct = await ProductStoreInstance.create({
+    const product: Product = await ProductStoreInstance.create({
       name: "OrderSpec Product",
       price: 99
     })
@@ -64,7 +65,7 @@ describe("Order Model", () => {
   })
 
   it("add method should add a order", async () => {
-    const createdOrder: ReadOrder = await createOrder(order)
+    const createdOrder: Order = await createOrder(order)
 
     expect(createdOrder).toEqual({
       id: createdOrder.id,
@@ -75,7 +76,7 @@ describe("Order Model", () => {
   })
 
   it("index method should return a list of orders", async () => {
-    const createdOrder: ReadOrder = await createOrder(order)
+    const createdOrder: Order = await createOrder(order)
     const orderList = await OrderStoreInstance.index()
 
     expect(orderList).toEqual([createdOrder])
@@ -84,7 +85,7 @@ describe("Order Model", () => {
   })
 
   it("show method should return the correct orders", async () => {
-    const createdOrder: ReadOrder = await createOrder(order)
+    const createdOrder: Order = await createOrder(order)
     const orderFromDb = await OrderStoreInstance.read(createdOrder.id)
 
     expect(orderFromDb).toEqual(createdOrder)
@@ -93,7 +94,7 @@ describe("Order Model", () => {
   })
 
   it("delete method should remove the order", async () => {
-    const createdOrder: ReadOrder = await createOrder(order)
+    const createdOrder: Order = await createOrder(order)
 
     await removeOrder(createdOrder.id)
 

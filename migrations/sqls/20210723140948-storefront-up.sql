@@ -5,10 +5,11 @@ CREATE TABLE products (
 );
 
 CREATE TABLE users (
-  id        SERIAL PRIMARY KEY,
-  firstname VARCHAR(250),
-  lastname  VARCHAR(250),
-  password  VARCHAR(24)
+  id              SERIAL PRIMARY KEY,
+  username        VARCHAR(250),
+  firstname       VARCHAR(250),
+  lastname        VARCHAR(250),
+  password_digest VARCHAR(250)
 );
 
 CREATE TABLE orders (

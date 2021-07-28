@@ -1,40 +1,37 @@
-// @ts-ignore
 import Client from "../database"
 
-export interface AddProduct {
+export interface BaseProduct {
   name: string;
   price: number;
 }
 
-export interface ReadProduct extends AddProduct {
+export interface Product extends BaseProduct {
   id: number;
 }
 
 export class ProductStore {
-  async index (): Promise<ReadProduct[]> {
+  async index (): Promise<Product[]> {
     try {
-      // @ts-ignore
-      const conn = await Client.connect()
+      const connection = await Client.connect()
       const sql = "SELECT * FROM products"
 
-      const result = await conn.query(sql)
+      const {rows} = await connection.query(sql)
 
-      conn.release()
+      connection.release()
 
-      return result.rows
+      return rows
     } catch (err) {
       throw new Error(`Could not get products. ${err}`)
     }
   }
 
-  async read (id: number): Promise<ReadProduct> {
+  async read (id: number): Promise<Product> {
     try {
       const sql = "SELECT * FROM products WHERE id=($1)"
-      // @ts-ignore
-      const conn = await Client.connect()
-      const {rows} = await conn.query(sql, [id])
+      const connection = await Client.connect()
+      const {rows} = await connection.query(sql, [id])
 
-      conn.release()
+      connection.release()
 
       return rows[0]
     } catch (err) {
@@ -42,16 +39,15 @@ export class ProductStore {
     }
   }
 
-  async create (product: AddProduct): Promise<ReadProduct> {
+  async create (product: BaseProduct): Promise<Product> {
     const {name, price} = product
 
     try {
       const sql = "INSERT INTO products (name, price) VALUES($1, $2) RETURNING *"
-      // @ts-ignore
-      const conn = await Client.connect()
-      const {rows} = await conn.query(sql, [name, price])
+      const connection = await Client.connect()
+      const {rows} = await connection.query(sql, [name, price])
 
-      conn.release()
+      connection.release()
 
       return rows[0]
     } catch (err) {
@@ -59,14 +55,13 @@ export class ProductStore {
     }
   }
 
-  async remove (id: number): Promise<ReadProduct> {
+  async remove (id: number): Promise<Product> {
     try {
       const sql = "DELETE FROM products WHERE id=($1)"
-      // @ts-ignore
-      const conn = await Client.connect()
-      const {rows} = await conn.query(sql, [id])
+      const connection = await Client.connect()
+      const {rows} = await connection.query(sql, [id])
 
-      conn.release()
+      connection.release()
 
       return rows[0]
     } catch (err) {

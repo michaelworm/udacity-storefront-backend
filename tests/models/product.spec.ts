@@ -1,14 +1,14 @@
-import {AddProduct, ReadProduct, ProductStore} from "../../src/models/product"
+import {BaseProduct, Product, ProductStore} from "../../src/models/product"
 
 const ProductStoreInstance = new ProductStore()
 
 describe("Product Model", () => {
-  const product: AddProduct = {
+  const product: BaseProduct = {
     name: "CodeMaster 3000",
     price: 2000
   }
 
-  async function createProduct (product: AddProduct) {
+  async function createProduct (product: BaseProduct) {
     return ProductStoreInstance.create(product)
   }
 
@@ -33,7 +33,7 @@ describe("Product Model", () => {
   })
 
   it("add method should add a product", async () => {
-    const createdProduct: ReadProduct = await createProduct(product)
+    const createdProduct: Product = await createProduct(product)
 
     expect(createdProduct).toEqual({
       id: createdProduct.id,
@@ -44,7 +44,7 @@ describe("Product Model", () => {
   })
 
   it("index method should return a list of products", async () => {
-    const createdProduct: ReadProduct = await createProduct(product)
+    const createdProduct: Product = await createProduct(product)
     const productList = await ProductStoreInstance.index()
 
     expect(productList).toEqual([createdProduct])
@@ -53,7 +53,7 @@ describe("Product Model", () => {
   })
 
   it("show method should return the correct product", async () => {
-    const createdProduct: ReadProduct = await createProduct(product)
+    const createdProduct: Product = await createProduct(product)
     const productFromDb = await ProductStoreInstance.read(createdProduct.id)
 
     expect(productFromDb).toEqual(createdProduct)
@@ -62,7 +62,7 @@ describe("Product Model", () => {
   })
 
   it("delete method should remove the product", async () => {
-    const createdProduct: ReadProduct = await createProduct(product)
+    const createdProduct: Product = await createProduct(product)
 
     await removeProduct(createdProduct.id)
 

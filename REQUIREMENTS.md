@@ -31,9 +31,10 @@ Table: *products*
 #### User
 Table: *users*
 - id `SERIAL PRIMARY KEY`
+- username `VARCHAR`
 - firstname `VARCHAR`
 - lastname `VARCHAR`
-- password `VARCHAR`
+- password_digest `VARCHAR`
 
 #### Orders
 Table: *orders*

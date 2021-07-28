@@ -1,41 +1,42 @@
-// @ts-ignore
+import {hashSync, compareSync} from "bcrypt"
 import Client from "../database"
 
-export interface AddUser {
+const {BCRYPT_PASSWORD, SALT_ROUNDS} = process.env
+
+export interface BaseUser {
+  username: string;
   firstname: string;
   lastname: string;
-  password: string;
+  password_digest: string;
 }
 
-export interface ReadUser extends AddUser {
+export interface User extends BaseUser {
   id: number;
 }
 
 export class UserStore {
-  async index (): Promise<ReadUser[]> {
+  async index (): Promise<User[]> {
     try {
-      // @ts-ignore
-      const conn = await Client.connect()
+      const connection = await Client.connect()
       const sql = "SELECT * FROM users"
 
-      const result = await conn.query(sql)
+      const {rows} = await connection.query(sql)
 
-      conn.release()
+      connection.release()
 
-      return result.rows
+      return rows
     } catch (err) {
       throw new Error(`Could not get users. ${err}`)
     }
   }
 
-  async read (id: number): Promise<ReadUser> {
+  async read (id: number): Promise<User> {
     try {
       const sql = "SELECT * FROM users WHERE id=($1)"
-      // @ts-ignore
-      const conn = await Client.connect()
-      const {rows} = await conn.query(sql, [id])
+      const connection = await Client.connect()
+      const {rows} = await connection.query(sql, [id])
 
-      conn.release()
+      connection.release()
 
       return rows[0]
     } catch (err) {
@@ -43,16 +44,16 @@ export class UserStore {
     }
   }
 
-  async create (user: AddUser): Promise<ReadUser> {
-    const {firstname, lastname, password} = user
+  async create (user: BaseUser): Promise<User> {
+    const {firstname, lastname, username, password_digest} = user
 
     try {
-      const sql = "INSERT INTO users (firstname, lastname, password) VALUES($1, $2, $3) RETURNING *"
-      // @ts-ignore
-      const conn = await Client.connect()
-      const {rows} = await conn.query(sql, [firstname, lastname, password])
+      const sql = "INSERT INTO users (firstname, lastname, username, password_digest) VALUES($1, $2, $3, $4) RETURNING *"
+      const hash = hashSync(password_digest + BCRYPT_PASSWORD, parseInt(SALT_ROUNDS as string, 10))
+      const connection = await Client.connect()
+      const {rows} = await connection.query(sql, [firstname, lastname, username, hash])
 
-      conn.release()
+      connection.release()
 
       return rows[0]
     } catch (err) {
@@ -60,18 +61,39 @@ export class UserStore {
     }
   }
 
-  async remove (id: number): Promise<ReadUser> {
+  async remove (id: number): Promise<User> {
     try {
       const sql = "DELETE FROM users WHERE id=($1)"
-      // @ts-ignore
-      const conn = await Client.connect()
-      const {rows} = await conn.query(sql, [id])
+      const connection = await Client.connect()
+      const {rows} = await connection.query(sql, [id])
 
-      conn.release()
+      connection.release()
 
       return rows[0]
     } catch (err) {
       throw new Error(`Could not delete user ${id}. ${err}`)
+    }
+  }
+
+  async authenticate (username: string, password_digest: string): Promise<true | null> {
+    try {
+      const sql = "SELECT password_digest FROM users WHERE username=($1)"
+      const connection = await Client.connect()
+      const {rows} = await connection.query(sql, [username])
+
+      if (rows.length > 0) {
+        const {password_digest: passwordDigestFromDb} = rows[0]
+
+        if (compareSync(password_digest + BCRYPT_PASSWORD, passwordDigestFromDb)) {
+          return true
+        }
+      }
+
+      connection.release()
+
+      return null
+    } catch (err) {
+      throw new Error(`Could not find user ${username}. ${err}`)
     }
   }
 }

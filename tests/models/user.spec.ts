@@ -1,15 +1,16 @@
-import {AddUser, ReadUser, UserStore} from "../../src/models/user"
+import {BaseUser, User, UserStore} from "../../src/models/user"
 
 const UserStoreInstance = new UserStore()
 
 describe("User Model", () => {
-  const user: AddUser = {
+  const user: BaseUser = {
+    username: "hansmeier",
     firstname: "Hans",
     lastname: "Meier",
-    password: "password123"
+    password_digest: "password123"
   }
 
-  async function createUser (user: AddUser) {
+  async function createUser (user: BaseUser) {
     return UserStoreInstance.create(user)
   }
 
@@ -34,7 +35,7 @@ describe("User Model", () => {
   })
 
   it("create method should create a user", async () => {
-    const createdUser: ReadUser = await createUser(user)
+    const createdUser: User = await createUser(user)
 
     expect(createdUser).toEqual({
       id: createdUser.id,
@@ -45,7 +46,7 @@ describe("User Model", () => {
   })
 
   it("index method should return a list of users", async () => {
-    const createdUser: ReadUser = await createUser(user)
+    const createdUser: User = await createUser(user)
     const userList = await UserStoreInstance.index()
 
     expect(userList).toEqual([createdUser])
@@ -54,7 +55,7 @@ describe("User Model", () => {
   })
 
   it("show method should return the correct users", async () => {
-    const createdUser: ReadUser = await createUser(user)
+    const createdUser: User = await createUser(user)
     const userFromDb = await UserStoreInstance.read(createdUser.id)
 
     expect(userFromDb).toEqual(createdUser)
@@ -63,12 +64,22 @@ describe("User Model", () => {
   })
 
   it("remove method should remove the user", async () => {
-    const createdUser: ReadUser = await createUser(user)
+    const createdUser: User = await createUser(user)
 
     await removeUser(createdUser.id)
 
     const userList = await UserStoreInstance.index()
 
     expect(userList).toEqual([])
+  })
+
+  it("authenticates the user with a password", async () => {
+    const createdUser: User = await createUser(user)
+
+    const isAuthenticated = await UserStoreInstance.authenticate(user.username, user.password_digest)
+
+    expect(isAuthenticated).toBe(true)
+
+    await removeUser(createdUser.id)
   })
 })

@@ -1,42 +1,39 @@
-// @ts-ignore
 import Client from "../database"
 
-export interface AddOrder {
+export interface BaseOrder {
   product_list: number[];
   quantity: number[];
   user_id: number;
   status: boolean;
 }
 
-export interface ReadOrder extends AddOrder {
+export interface Order extends BaseOrder {
   id: number;
 }
 
 export class OrderStore {
-  async index (): Promise<ReadOrder[]> {
+  async index (): Promise<Order[]> {
     try {
-      // @ts-ignore
-      const conn = await Client.connect()
+      const connection = await Client.connect()
       const sql = "SELECT * FROM orders"
 
-      const result = await conn.query(sql)
+      const {rows} = await connection.query(sql)
 
-      conn.release()
+      connection.release()
 
-      return result.rows
+      return rows
     } catch (err) {
       throw new Error(`Could not get orders. ${err}`)
     }
   }
 
-  async read (id: number): Promise<ReadOrder> {
+  async read (id: number): Promise<Order> {
     try {
       const sql = "SELECT * FROM orders WHERE id=($1)"
-      // @ts-ignore
-      const conn = await Client.connect()
-      const {rows} = await conn.query(sql, [id])
+      const connection = await Client.connect()
+      const {rows} = await connection.query(sql, [id])
 
-      conn.release()
+      connection.release()
 
       return rows[0]
     } catch (err) {
@@ -44,16 +41,15 @@ export class OrderStore {
     }
   }
 
-  async create (order: AddOrder): Promise<ReadOrder> {
+  async create (order: BaseOrder): Promise<Order> {
     const {product_list, quantity, status, user_id} = order
 
     try {
       const sql = "INSERT INTO orders (product_list, quantity, user_id, status) VALUES($1, $2, $3, $4) RETURNING *"
-      // @ts-ignore
-      const conn = await Client.connect()
-      const {rows} = await conn.query(sql, [product_list, quantity, user_id, status])
+      const connection = await Client.connect()
+      const {rows} = await connection.query(sql, [product_list, quantity, user_id, status])
 
-      conn.release()
+      connection.release()
 
       return rows[0]
     } catch (err) {
@@ -61,14 +57,13 @@ export class OrderStore {
     }
   }
 
-  async remove (id: number): Promise<ReadOrder> {
+  async remove (id: number): Promise<Order> {
     try {
       const sql = "DELETE FROM orders WHERE id=($1)"
-      // @ts-ignore
-      const conn = await Client.connect()
-      const {rows} = await conn.query(sql, [id])
+      const connection = await Client.connect()
+      const {rows} = await connection.query(sql, [id])
 
-      conn.release()
+      connection.release()
 
       return rows[0]
     } catch (err) {
