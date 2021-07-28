@@ -75,17 +75,17 @@ export class UserStore {
     }
   }
 
-  async authenticate (username: string, password_digest: string): Promise<true | null> {
+  async authenticate (username: string, password_digest: string): Promise<User | null> {
     try {
-      const sql = "SELECT password_digest FROM users WHERE username=($1)"
+      const sql = "SELECT * FROM users WHERE username=($1)"
       const connection = await Client.connect()
       const {rows} = await connection.query(sql, [username])
 
       if (rows.length > 0) {
-        const {password_digest: passwordDigestFromDb} = rows[0]
+        const user = rows[0]
 
-        if (compareSync(password_digest + BCRYPT_PASSWORD, passwordDigestFromDb)) {
-          return true
+        if (compareSync(password_digest + BCRYPT_PASSWORD, user.password_digest)) {
+          return user
         }
       }
 

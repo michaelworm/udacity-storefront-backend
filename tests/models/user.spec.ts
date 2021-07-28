@@ -37,10 +37,13 @@ describe("User Model", () => {
   it("create method should create a user", async () => {
     const createdUser: User = await createUser(user)
 
-    expect(createdUser).toEqual({
-      id: createdUser.id,
-      ...user
-    })
+    if (createdUser) {
+      const {username, firstname, lastname} = createdUser
+
+      expect(username).toBe(user.username)
+      expect(firstname).toBe(user.firstname)
+      expect(lastname).toBe(user.lastname)
+    }
 
     await removeUser(createdUser.id)
   })
@@ -76,9 +79,15 @@ describe("User Model", () => {
   it("authenticates the user with a password", async () => {
     const createdUser: User = await createUser(user)
 
-    const isAuthenticated = await UserStoreInstance.authenticate(user.username, user.password_digest)
+    const userFromDb = await UserStoreInstance.authenticate(user.username, user.password_digest)
 
-    expect(isAuthenticated).toBe(true)
+    if (userFromDb) {
+      const {username, firstname, lastname} = userFromDb
+
+      expect(username).toBe(user.username)
+      expect(firstname).toBe(user.firstname)
+      expect(lastname).toBe(user.lastname)
+    }
 
     await removeUser(createdUser.id)
   })
