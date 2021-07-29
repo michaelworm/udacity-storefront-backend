@@ -13,7 +13,7 @@ These are the notes from a meeting with the frontend developer that describe wha
 
 #### Users
 - Index `/users` [GET] [token required]
-- Create `/users/create` [POST] [token required]
+- Create `/users/create` [POST] 
 - Read `/users/:id` [GET] [token required]
 - Update `/users/:id` [PUT] [token required]
 - Delete `/users/:id` [DELETE] [token required]

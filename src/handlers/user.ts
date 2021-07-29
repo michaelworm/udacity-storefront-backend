@@ -1,12 +1,25 @@
 import {Application, Request, Response} from "express"
 import {User, UserStore} from "../models/user"
+import {checkAuthHeader, getTokenByUser} from "./helpers"
 
 const UserStoreInstance = new UserStore()
 
-const index = async (_req: Request, res: Response) => {
-  const users: User[] = await UserStoreInstance.index()
+const index = async (req: Request, res: Response) => {
+  if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
+    res.status(401)
+    res.json("Access denied, invalid token")
 
-  res.json(users)
+    return false
+  }
+
+  try {
+    const users: User[] = await UserStoreInstance.index()
+
+    res.json(users)
+  } catch (e) {
+    res.status(400)
+    res.json(e)
+  }
 }
 
 const create = async (req: Request, res: Response) => {
@@ -24,7 +37,7 @@ const create = async (req: Request, res: Response) => {
 
     const user: User = await UserStoreInstance.create({firstname, lastname, username, password})
 
-    res.json(user)
+    res.json(getTokenByUser(user))
   } catch (e) {
     res.status(400)
     res.json(e)
@@ -32,20 +45,39 @@ const create = async (req: Request, res: Response) => {
 }
 
 const read = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id, 10)
+  if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
+    res.status(401)
+    res.json("Access denied, invalid token")
 
-  if (!id) {
-    res.status(400)
-    res.send("Missing required parameter :id.")
     return false
   }
 
-  const user: User = await UserStoreInstance.read(id)
+  try {
+    const id = parseInt(req.params.id, 10)
 
-  res.json(user)
+    if (!id) {
+      res.status(400)
+      res.send("Missing required parameter :id.")
+      return false
+    }
+
+    const user: User = await UserStoreInstance.read(id)
+
+    res.json(user)
+  } catch (e) {
+    res.status(400)
+    res.json(e)
+  }
 }
 
 const update = async (req: Request, res: Response) => {
+  if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
+    res.status(401)
+    res.json("Access denied, invalid token")
+
+    return false
+  }
+
   try {
     const id = parseInt(req.params.id, 10)
     const firstname = req.query.firstname as string
@@ -67,6 +99,13 @@ const update = async (req: Request, res: Response) => {
 }
 
 const deleteUser = async (req: Request, res: Response) => {
+  if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
+    res.status(401)
+    res.json("Access denied, invalid token")
+
+    return false
+  }
+
   try {
     const id = parseInt(req.params.id, 10)
 
@@ -87,7 +126,7 @@ const deleteUser = async (req: Request, res: Response) => {
 
 const authenticate = async (req: Request, res: Response) => {
   try {
-    const {username, password} = req.body
+    const {username, password} = req.query
 
     if (!username || !password) {
       res.status(400)
@@ -95,7 +134,7 @@ const authenticate = async (req: Request, res: Response) => {
       return false
     }
 
-    const user: User | null = await UserStoreInstance.authenticate(username, password)
+    const user: User | null = await UserStoreInstance.authenticate(username as string, password as string)
 
     if (!user) {
       res.status(401)
@@ -104,7 +143,7 @@ const authenticate = async (req: Request, res: Response) => {
       return false
     }
 
-    res.json(user)
+    res.json(getTokenByUser(user))
   } catch (e) {
     res.status(400)
     res.json(e)

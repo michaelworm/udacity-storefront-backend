@@ -1,4 +1,4 @@
-import {hashSync, compareSync} from "bcrypt"
+import bcrypt from "bcrypt"
 import Client from "../database"
 
 const {BCRYPT_PASSWORD, SALT_ROUNDS} = process.env
@@ -38,7 +38,7 @@ export class UserStore {
 
     try {
       const sql = "INSERT INTO users (firstname, lastname, username, password_digest) VALUES($1, $2, $3, $4) RETURNING *"
-      const hash = hashSync(password + BCRYPT_PASSWORD, parseInt(SALT_ROUNDS as string, 10))
+      const hash = bcrypt.hashSync(password + BCRYPT_PASSWORD, parseInt(SALT_ROUNDS as string, 10))
       const connection = await Client.connect()
       const {rows} = await connection.query(sql, [firstname, lastname, username, hash])
 
@@ -104,7 +104,7 @@ export class UserStore {
       if (rows.length > 0) {
         const user = rows[0]
 
-        if (compareSync(password + BCRYPT_PASSWORD, user.password_digest)) {
+        if (bcrypt.compareSync(password + BCRYPT_PASSWORD, user.password_digest)) {
           return user
         }
       }
