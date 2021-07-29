@@ -17,7 +17,7 @@ These are the notes from a meeting with the frontend developer that describe wha
 - Read `/users/:id` [GET] [token required]
 - Update `/users/:id` [PUT] [token required]
 - Delete `/users/:id` [DELETE] [token required]
-- Auth `/users/auth` [POST] [token required]
+- Auth `/users/auth` [POST]
 
 #### Orders
 - Index `/orders` [GET] [token required]

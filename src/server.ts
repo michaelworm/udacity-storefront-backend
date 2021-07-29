@@ -5,16 +5,25 @@ import path from "path"
 import userRoutes from "./handlers/user"
 
 const app: Application = express()
-const address: string = "127.0.0.1:3000"
+
+let port: number = 3000
+
+if (process.env.ENV === "test") {
+  port = 3001
+}
+
+const address: string = `127.0.0.1:${port}`
 
 app.use(bodyParser.json())
 
 app.get("/", (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '../index.html'));
+  res.sendFile(path.join(__dirname, "../index.html"))
 })
 
 userRoutes(app)
 
-app.listen(3000, () => {
+app.listen(port, () => {
   console.log(`Starting app on: ${address}`)
 })
+
+export default app
