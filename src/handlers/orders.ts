@@ -1,8 +1,8 @@
 import {Application, Request, Response} from "express"
-import {Product, ProductStore} from "../models/product"
+import {Order, OrderStore} from "../models/order"
 import {checkAuthHeader} from "./helpers"
 
-const ProductStoreInstance = new ProductStore()
+const OrderStoreInstance = new OrderStore()
 
 const index = async (req: Request, res: Response) => {
   if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
@@ -13,9 +13,9 @@ const index = async (req: Request, res: Response) => {
   }
 
   try {
-    const products: Product[] = await ProductStoreInstance.index()
+    const orders: Order[] = await OrderStoreInstance.index()
 
-    res.json(products)
+    res.json(orders)
   } catch (e) {
     res.status(400)
     res.json(e)
@@ -31,18 +31,20 @@ const create = async (req: Request, res: Response) => {
   }
 
   try {
-    const name = req.query.name as string
-    const price = parseInt(req.query.price as string, 10)
+    const product_list = req.query.product_list as unknown as number[]
+    const quantity = req.query.quantity as unknown as number[]
+    const status = req.query.status as unknown as boolean
+    const user_id = req.query.user_id as unknown as number
 
-    if (!name || !price) {
+    if (!product_list || !quantity || !status || !user_id) {
       res.status(400)
-      res.send("Some required parameters are missing! eg. :name, :price")
+      res.send("Some required parameters are missing! eg. :product_list, :quantity, :status, :user_id")
       return false
     }
 
-    const product: Product = await ProductStoreInstance.create({name, price})
+    const order: Order = await OrderStoreInstance.create({product_list, quantity, status, user_id})
 
-    res.json(product)
+    res.json(order)
   } catch (e) {
     res.status(400)
     res.json(e)
@@ -66,9 +68,9 @@ const read = async (req: Request, res: Response) => {
       return false
     }
 
-    const product: Product = await ProductStoreInstance.read(id)
+    const order: Order = await OrderStoreInstance.read(id)
 
-    res.json(product)
+    res.json(order)
   } catch (e) {
     res.status(400)
     res.json(e)
@@ -85,25 +87,27 @@ const update = async (req: Request, res: Response) => {
 
   try {
     const id = parseInt(req.params.id, 10)
-    const name = req.query.name as string
-    const price = parseInt(req.query.price as string, 10)
+    const product_list = req.query.product_list as unknown as number[]
+    const quantity = req.query.quantity as unknown as number[]
+    const status = req.query.status as unknown as boolean
+    const user_id = req.query.user_id as unknown as number
 
-    if (!name || !price || !id) {
+    if (!product_list || !quantity || !status || !user_id || !id) {
       res.status(400)
-      res.send("Some required parameters are missing! eg. :name, :price, :id")
+      res.send("Some required parameters are missing! eg. :product_list, :quantity, :status, :user_id, :id")
       return false
     }
 
-    const product: Product = await ProductStoreInstance.update(id, {name, price})
+    const order: Order = await OrderStoreInstance.update(id, {product_list, quantity, status, user_id})
 
-    res.json(product)
+    res.json(order)
   } catch (e) {
     res.status(400)
     res.json(e)
   }
 }
 
-const deleteProduct = async (req: Request, res: Response) => {
+const deleteOrder = async (req: Request, res: Response) => {
   if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
     res.status(401)
     res.json("Access denied, invalid token")
@@ -120,19 +124,19 @@ const deleteProduct = async (req: Request, res: Response) => {
       return false
     }
 
-    await ProductStoreInstance.deleteProduct(id)
+    await OrderStoreInstance.deleteOrder(id)
 
-    res.send(`Product with id ${id} successfully deleted.`)
+    res.send(`Order with id ${id} successfully deleted.`)
   } catch (e) {
     res.status(400)
     res.json(e)
   }
 }
 
-export default function productRoutes (app: Application) {
-  app.get("/products", index)
-  app.post("/products/create", create)
-  app.get("/products/:id", read)
-  app.put("/products/:id", update)
-  app.delete("/products/:id", deleteProduct)
+export default function orderRoutes (app: Application) {
+  app.get("/orders", index)
+  app.post("/orders/create", create)
+  app.get("/orders/:id", read)
+  app.put("/orders/:id", update)
+  app.delete("/orders/:id", deleteOrder)
 }

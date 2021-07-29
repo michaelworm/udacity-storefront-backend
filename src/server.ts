@@ -4,6 +4,7 @@ import path from "path"
 
 import userRoutes from "./handlers/user"
 import productRoutes from "./handlers/product"
+import orderRoutes from "./handlers/orders"
 
 const app: Application = express()
 
@@ -23,6 +24,7 @@ app.get("/", (req: Request, res: Response) => {
 
 userRoutes(app)
 productRoutes(app)
+orderRoutes(app)
 
 app.listen(port, () => {
   console.info(`Starting app on: ${address}`)
