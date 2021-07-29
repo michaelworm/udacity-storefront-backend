@@ -3,6 +3,7 @@ import bodyParser from "body-parser"
 import path from "path"
 
 import userRoutes from "./handlers/user"
+import productRoutes from "./handlers/product"
 
 const app: Application = express()
 
@@ -21,9 +22,10 @@ app.get("/", (req: Request, res: Response) => {
 })
 
 userRoutes(app)
+productRoutes(app)
 
 app.listen(port, () => {
-  console.log(`Starting app on: ${address}`)
+  console.info(`Starting app on: ${address}`)
 })
 
 export default app

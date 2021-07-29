@@ -1,23 +1,24 @@
 import supertest from "supertest"
 import querystring from "querystring"
+import jwt, {Secret} from "jsonwebtoken"
 
 import app from "../../src/server"
 
 const request = supertest(app)
+const SECRET = process.env.TOKEN_SECRET as Secret
 
-describe("User Handlers", () => {
+describe("User Handler", () => {
   const user = {
     username: "hansmeier",
     firstname: "Hans",
     lastname: "Meier",
     password: "password123"
   }
-  const userId: number = 1
   const stringifiedUser: string = querystring.stringify(user)
 
-  let token: string
+  let token: string, userId: number = 1
 
-  it("should require authorization", (done) => {
+  it("should require authorization on every endpoint", (done) => {
     request
     .get("/users")
     .then((res) => {
@@ -47,12 +48,16 @@ describe("User Handlers", () => {
     })
   })
 
-  it("creates a user via endpoint", (done) => {
+  it("gets the create endpoint", (done) => {
     request
     .post(`/users/create?${stringifiedUser}`)
     .then((res) => {
       const {body, status} = res
       token = body
+
+      // @ts-ignore
+      const {user} = jwt.verify(token, SECRET)
+      userId = user.id
 
       expect(status).toBe(200)
       done()
@@ -61,7 +66,8 @@ describe("User Handlers", () => {
 
   it("gets the index endpoint", (done) => {
     request
-    .get(`/users`).set("Authorization", "bearer " + token)
+    .get("/users").set("Authorization", "bearer " + token)
+    .set("Authorization", "bearer " + token)
     .then((res) => {
       expect(res.status).toBe(200)
       done()
@@ -108,9 +114,10 @@ describe("User Handlers", () => {
     })
   })
 
-  it("deletes a user via endpoint", (done) => {
-    request.
-    delete(`/users/1`).set("Authorization", "bearer " + token)
+  it("gets the delete endpoint", (done) => {
+    request
+    .delete(`/users/${userId}`)
+    .set("Authorization", "bearer " + token)
     .then((res) => {
       expect(res.status).toBe(200)
       done()

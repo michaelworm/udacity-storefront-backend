@@ -19,6 +19,8 @@ export function checkAuthHeader (authHeaders: string) {
 
     return true
   } catch (err) {
+    console.error(err)
+
     return false
   }
 }
