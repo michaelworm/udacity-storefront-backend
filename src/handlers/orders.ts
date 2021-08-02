@@ -31,8 +31,8 @@ const create = async (req: Request, res: Response) => {
   }
 
   try {
-    const product_list = req.query.product_list as unknown as number[]
-    const quantity = req.query.quantity as unknown as number[]
+    let product_list = req.query.product_list as unknown as number[]
+    let quantity = req.query.quantity as unknown as number[]
     const status = req.query.status as unknown as boolean
     const user_id = req.query.user_id as unknown as number
 
@@ -40,6 +40,14 @@ const create = async (req: Request, res: Response) => {
       res.status(400)
       res.send("Some required parameters are missing! eg. :product_list, :quantity, :status, :user_id")
       return false
+    }
+
+    if (!Array.isArray(product_list)) {
+      product_list = [product_list]
+    }
+
+    if (!Array.isArray(quantity)) {
+      quantity = [quantity]
     }
 
     const order: Order = await OrderStoreInstance.create({product_list, quantity, status, user_id})
@@ -87,8 +95,8 @@ const update = async (req: Request, res: Response) => {
 
   try {
     const id = parseInt(req.params.id, 10)
-    const product_list = req.query.product_list as unknown as number[]
-    const quantity = req.query.quantity as unknown as number[]
+    let product_list = req.query.product_list as unknown as number[]
+    let quantity = req.query.quantity as unknown as number[]
     const status = req.query.status as unknown as boolean
     const user_id = req.query.user_id as unknown as number
 
@@ -96,6 +104,14 @@ const update = async (req: Request, res: Response) => {
       res.status(400)
       res.send("Some required parameters are missing! eg. :product_list, :quantity, :status, :user_id, :id")
       return false
+    }
+
+    if (!Array.isArray(product_list)) {
+      product_list = [product_list]
+    }
+
+    if (!Array.isArray(quantity)) {
+      quantity = [quantity]
     }
 
     const order: Order = await OrderStoreInstance.update(id, {product_list, quantity, status, user_id})

@@ -1,22 +1,23 @@
 import supertest from "supertest"
-import querystring from "querystring"
+import querystring, {ParsedUrlQueryInput} from "querystring"
 import jwt, {Secret} from "jsonwebtoken"
 
 import app from "../../src/server"
+import {BaseProduct} from "../../src/models/product"
 
 const request = supertest(app)
 const SECRET = process.env.TOKEN_SECRET as Secret
 
 describe("Product Handler", () => {
-  const product = {
+  const product: BaseProduct = {
     name: "CodeMaster 3000",
     price: 999
   }
-  const stringifiedProduct: string = querystring.stringify(product)
+  const stringifiedProduct: string = querystring.stringify(product as unknown as ParsedUrlQueryInput)
 
   let token: string, userId: number, productId: number
 
-  beforeAll((done) => {
+  beforeAll(async () => {
     const stringifiedUser: string = querystring.stringify({
       username: "produkttester",
       firstname: "Produkt",
@@ -24,17 +25,13 @@ describe("Product Handler", () => {
       password: "password123"
     })
 
-    request
-    .post(`/users/create?${stringifiedUser}`)
-    .then((res) => {
-      token = res.body
+    const {body} = await request.post(`/users/create?${stringifiedUser}`)
 
-      // @ts-ignore
-      const {user} = jwt.verify(token, SECRET)
-      userId = user.id
+    token = body
 
-      done()
-    })
+    // @ts-ignore
+    const {user} = jwt.verify(token, SECRET)
+    userId = user.id
   })
 
   afterAll(async () => {
@@ -47,6 +44,7 @@ describe("Product Handler", () => {
     .set("Authorization", "bearer " + token)
     .then((res) => {
       const {body, status} = res
+
       expect(status).toBe(200)
 
       productId = body.id
@@ -76,8 +74,14 @@ describe("Product Handler", () => {
   })
 
   it("gets the update endpoint", (done) => {
+    const stringifiedNewProduct: string = querystring.stringify({
+      ...product,
+      name: "CodeMerge 156 A",
+      price: 1299
+    })
+
     request
-    .put(`/products/${productId}?name=${product.name + "test2"}&price=${product.price + "test2"}`)
+    .put(`/products/${productId}?${stringifiedNewProduct}`)
     .set("Authorization", "bearer " + token)
     .then((res) => {
       expect(res.status).toBe(200)

@@ -1,20 +1,21 @@
 import supertest from "supertest"
-import querystring from "querystring"
+import querystring, {ParsedUrlQueryInput} from "querystring"
 import jwt, {Secret} from "jsonwebtoken"
 
 import app from "../../src/server"
+import {BaseAuthUser} from "../../src/models/user"
 
 const request = supertest(app)
 const SECRET = process.env.TOKEN_SECRET as Secret
 
 describe("User Handler", () => {
-  const user = {
+  const user: BaseAuthUser = {
     username: "hansmeier",
     firstname: "Hans",
     lastname: "Meier",
     password: "password123"
   }
-  const stringifiedUser: string = querystring.stringify(user)
+  const stringifiedUser: string = querystring.stringify(user as unknown as ParsedUrlQueryInput)
 
   let token: string, userId: number = 1
 
@@ -85,8 +86,14 @@ describe("User Handler", () => {
   })
 
   it("gets the update endpoint", (done) => {
+    const stringifiedUpdatedUser: string = querystring.stringify({
+      ...user,
+      firstname: "Lorenz",
+      lastname: "Meier"
+    })
+
     request
-    .put(`/users/${userId}?firstname=${user.firstname + "test2"}&lastname=${user.lastname + "test2"}`)
+    .put(`/users/${userId}?${stringifiedUpdatedUser}`)
     .set("Authorization", "bearer " + token)
     .then((res) => {
       expect(res.status).toBe(200)
