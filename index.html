@@ -10,24 +10,27 @@
   <h1>Welcome to the Udacity Storefront!</h1>
   <p>The following routes are supported:</p>
   <pre>
-    ### Products
+    #### Products
     - Index `/products` [GET]
-    - Read `/products/:id` [GET]
     - Create `/products/create` [POST] [token required]
-    - Delete `/products/delete/:id` [POST] [token required]
+    - Read `/products/:id` [GET]
+    - Update `/products/:id` [PUT] [token required]
+    - Delete `/products/:id` [DELETE] [token required]
 
     #### Users
     - Index `/users` [GET] [token required]
+    - Create `/users/create` [POST]
     - Read `/users/:id` [GET] [token required]
-    - Create `/users/create` [POST] [token required]
-    - Delete `/users/delete/:id` [POST] [token required]
-    - Auth `/users/auth/:id` [POST] [token required]
+    - Update `/users/:id` [PUT] [token required]
+    - Delete `/users/:id` [DELETE] [token required]
+    - Auth `/users/auth` [POST]
 
     #### Orders
     - Index `/orders` [GET] [token required]
-    - Read `/orders/:id` [GET] [token required]
     - Create `/orders/create` [POST] [token required]
-    - Delete `/orders/delete/:id` [POST] [token required]
+    - Read `/orders/:id` [GET] [token required]
+    - Update `/orders/:id` [PUT] [token required]
+    - Delete `/orders/:id` [DELETE] [token required]
   </pre>
 </body>
 </html>

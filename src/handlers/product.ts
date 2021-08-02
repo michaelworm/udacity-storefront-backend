@@ -5,13 +5,6 @@ import {checkAuthHeader} from "./helpers"
 const ProductStoreInstance = new ProductStore()
 
 const index = async (req: Request, res: Response) => {
-  if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
-    res.status(401)
-    res.json("Access denied, invalid token")
-
-    return false
-  }
-
   try {
     const products: Product[] = await ProductStoreInstance.index()
 
@@ -50,13 +43,6 @@ const create = async (req: Request, res: Response) => {
 }
 
 const read = async (req: Request, res: Response) => {
-  if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
-    res.status(401)
-    res.json("Access denied, invalid token")
-
-    return false
-  }
-
   try {
     const id = parseInt(req.params.id, 10)
 

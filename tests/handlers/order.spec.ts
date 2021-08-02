@@ -65,7 +65,7 @@ describe("Order Handler", () => {
 
   it("gets the index endpoint", (done) => {
     request
-    .get("/orders").set("Authorization", "bearer " + token)
+    .get("/orders")
     .set("Authorization", "bearer " + token)
     .then((res) => {
       expect(res.status).toBe(200)

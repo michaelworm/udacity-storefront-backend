@@ -67,7 +67,7 @@ describe("User Handler", () => {
 
   it("gets the index endpoint", (done) => {
     request
-    .get("/users").set("Authorization", "bearer " + token)
+    .get("/users")
     .set("Authorization", "bearer " + token)
     .then((res) => {
       expect(res.status).toBe(200)

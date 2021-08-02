@@ -55,8 +55,7 @@ describe("Product Handler", () => {
 
   it("gets the index endpoint", (done) => {
     request
-    .get("/products").set("Authorization", "bearer " + token)
-    .set("Authorization", "bearer " + token)
+    .get("/products")
     .then((res) => {
       expect(res.status).toBe(200)
       done()
@@ -66,7 +65,6 @@ describe("Product Handler", () => {
   it("gets the read endpoint", (done) => {
     request
     .get(`/products/${productId}`)
-    .set("Authorization", "bearer " + token)
     .then((res) => {
       expect(res.status).toBe(200)
       done()
