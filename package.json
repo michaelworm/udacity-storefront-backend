@@ -7,7 +7,9 @@
     "start": "node dist/server.js",
     "watch": "tsc-watch --esModuleInterop src/server.ts --outDir ./dist --onSuccess 'node ./dist/server.js'",
     "test": "db-migrate --env test up && ENV=test jasmine-ts --config jasmine.json || db-migrate --env test down",
-    "build": "tsc --esModuleInterop src/server.ts --outDir ./dist"
+    "build": "tsc --esModuleInterop src/server.ts --outDir ./dist",
+    "db-up": "db-migrate up",
+    "db-down": "db-migrate down"
   },
   "author": "Udacity",
   "license": "ISC",
