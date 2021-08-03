@@ -1,6 +1,6 @@
-import {BaseOrder, Order, OrderStore} from "../../src/models/order"
-import {User, UserStore} from "../../src/models/user"
-import {Product, ProductStore} from "../../src/models/product"
+import {BaseOrder, Order, OrderStore} from "../../models/order"
+import {User, UserStore} from "../../models/user"
+import {Product, ProductStore} from "../../models/product"
 
 const OrderStoreInstance = new OrderStore()
 

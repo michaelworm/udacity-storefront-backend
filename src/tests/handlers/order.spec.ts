@@ -2,8 +2,8 @@ import supertest from "supertest"
 import querystring, {ParsedUrlQueryInput} from "querystring"
 import jwt, {Secret} from "jsonwebtoken"
 
-import app from "../../src/server"
-import {BaseOrder} from "../../src/models/order"
+import app from "../../server"
+import {BaseOrder} from "../../models/order"
 
 const request = supertest(app)
 const SECRET = process.env.TOKEN_SECRET as Secret

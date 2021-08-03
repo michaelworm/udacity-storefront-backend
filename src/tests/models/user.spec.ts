@@ -1,4 +1,4 @@
-import {BaseAuthUser, BaseUser, User, UserStore} from "../../src/models/user"
+import {BaseAuthUser, BaseUser, User, UserStore} from "../../models/user"
 
 const UserStoreInstance = new UserStore()
 
