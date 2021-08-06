@@ -36,8 +36,10 @@ describe("Order Model", () => {
     product_id = product.id
 
     order = {
-      product_list: [product_id],
-      quantity: [5],
+      products: [{
+        product_id,
+        quantity: 5
+      }],
       user_id,
       status: true
     }
@@ -96,15 +98,17 @@ describe("Order Model", () => {
   it("update method should update the order", async () => {
     const createdOrder: Order = await createOrder(order)
     const newOrderData: BaseOrder = {
-      product_list: [product_id],
-      quantity: [200],
+      products: [{
+        product_id,
+        quantity: 200
+      }],
       user_id,
       status: false
     }
 
-    const {quantity, status} = await OrderStoreInstance.update(createdOrder.id, newOrderData)
+    const {products, status} = await OrderStoreInstance.update(createdOrder.id, newOrderData)
 
-    expect(quantity).toEqual(newOrderData.quantity)
+    expect(products).toEqual(newOrderData.products)
     expect(status).toEqual(newOrderData.status)
 
     await deleteOrder(createdOrder.id)

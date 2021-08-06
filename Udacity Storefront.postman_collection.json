@@ -328,7 +328,7 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:3000/orders/create?product_list=[1]&quantity=[20]&user_id=1&status=true",
+					"raw": "http://127.0.0.1:3000/orders/create?product_list=[1]&quantity_list=[20]&user_id=1&status=true",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -347,7 +347,7 @@
 							"value": "[1]"
 						},
 						{
-							"key": "quantity",
+							"key": "quantity_list",
 							"value": "[20]"
 						},
 						{
@@ -414,7 +414,7 @@
 				"method": "PUT",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:3000/orders/1?product_list=[1]&quantity=[50]&user_id=1&status=true",
+					"raw": "http://127.0.0.1:3000/orders/1?product_list=[1]&quantity_list=[50]&user_id=1&status=true",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -433,7 +433,7 @@
 							"value": "[1]"
 						},
 						{
-							"key": "quantity",
+							"key": "quantity_list",
 							"value": "[50]"
 						},
 						{

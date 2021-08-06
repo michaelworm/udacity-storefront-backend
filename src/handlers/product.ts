@@ -24,10 +24,10 @@ const create = async (req: Request, res: Response) => {
   }
 
   try {
-    const name = req.query.name as string
-    const price = parseInt(req.query.price as string, 10)
+    const name = req.body.name as unknown as string
+    const price = req.body.price as unknown as number
 
-    if (!name || !price) {
+    if (name  === undefined || price  === undefined) {
       res.status(400)
       res.send("Some required parameters are missing! eg. :name, :price")
       return false
@@ -44,9 +44,9 @@ const create = async (req: Request, res: Response) => {
 
 const read = async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id, 10)
+    const id = req.params.id as unknown as number
 
-    if (!id) {
+    if (id  === undefined) {
       res.status(400)
       res.send("Missing required parameter :id.")
       return false
@@ -70,11 +70,11 @@ const update = async (req: Request, res: Response) => {
   }
 
   try {
-    const id = parseInt(req.params.id, 10)
-    const name = req.query.name as string
-    const price = parseInt(req.query.price as string, 10)
+    const id = req.params.id as unknown as number
+    const name = req.body.name as unknown as string
+    const price = req.body.price as unknown as number
 
-    if (!name || !price || !id) {
+    if (name === undefined || price === undefined || id === undefined) {
       res.status(400)
       res.send("Some required parameters are missing! eg. :name, :price, :id")
       return false
@@ -98,9 +98,9 @@ const deleteProduct = async (req: Request, res: Response) => {
   }
 
   try {
-    const id = parseInt(req.params.id, 10)
+    const id = req.params.id as unknown as number
 
-    if (!id) {
+    if (id === undefined) {
       res.status(400)
       res.send("Missing required parameter :id.")
       return false

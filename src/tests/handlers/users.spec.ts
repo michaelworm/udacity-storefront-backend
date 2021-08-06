@@ -1,5 +1,4 @@
 import supertest from "supertest"
-import querystring, {ParsedUrlQueryInput} from "querystring"
 import jwt, {Secret} from "jsonwebtoken"
 
 import app from "../../server"
@@ -9,13 +8,12 @@ const request = supertest(app)
 const SECRET = process.env.TOKEN_SECRET as Secret
 
 describe("User Handler", () => {
-  const user: BaseAuthUser = {
+  const userData: BaseAuthUser = {
     username: "hansmeier",
     firstname: "Hans",
     lastname: "Meier",
     password: "password123"
   }
-  const stringifiedUser: string = querystring.stringify(user as unknown as ParsedUrlQueryInput)
 
   let token: string, userId: number = 1
 
@@ -35,7 +33,11 @@ describe("User Handler", () => {
     })
 
     request
-    .put(`/users/${userId}?firstname=${user.firstname + "test2"}&lastname=${user.lastname + "test2"}`)
+    .put(`/users/${userId}`)
+    .send({
+      firstName: userData.firstname + "test",
+      lastName: userData.lastname + "test"
+    })
     .then((res) => {
       expect(res.status).toBe(401)
       done()
@@ -51,7 +53,8 @@ describe("User Handler", () => {
 
   it("gets the create endpoint", (done) => {
     request
-    .post(`/users/create?${stringifiedUser}`)
+    .post("/users/create")
+    .send(userData)
     .then((res) => {
       const {body, status} = res
       token = body
@@ -86,14 +89,15 @@ describe("User Handler", () => {
   })
 
   it("gets the update endpoint", (done) => {
-    const stringifiedUpdatedUser: string = querystring.stringify({
-      ...user,
+    const newUserData: BaseAuthUser = {
+      ...userData,
       firstname: "Lorenz",
       lastname: "Meier"
-    })
+    }
 
     request
-    .put(`/users/${userId}?${stringifiedUpdatedUser}`)
+    .put(`/users/${userId}`)
+    .send(newUserData)
     .set("Authorization", "bearer " + token)
     .then((res) => {
       expect(res.status).toBe(200)
@@ -103,7 +107,11 @@ describe("User Handler", () => {
 
   it("gets the auth endpoint", (done) => {
     request
-    .post(`/users/auth?username=${user.username}&password=${user.password}`)
+    .post("/users/auth")
+    .send({
+      username: userData.username,
+      password: userData.password
+    })
     .set("Authorization", "bearer " + token)
     .then((res) => {
       expect(res.status).toBe(200)
@@ -113,7 +121,11 @@ describe("User Handler", () => {
 
   it("gets the auth endpoint with wrong password", (done) => {
     request
-    .post(`/users/auth?username=${user.username}&password=wrongpw`)
+    .post("/users/auth")
+    .send({
+      username: userData.username,
+      password: "wrongpw"
+    })
     .set("Authorization", "bearer " + token)
     .then((res) => {
       expect(res.status).toBe(401)

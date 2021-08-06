@@ -1,9 +1,9 @@
 import supertest from "supertest"
-import querystring, {ParsedUrlQueryInput} from "querystring"
 import jwt, {Secret} from "jsonwebtoken"
 
 import app from "../../server"
 import {BaseProduct} from "../../models/product"
+import {BaseAuthUser} from "../../models/user"
 
 const request = supertest(app)
 const SECRET = process.env.TOKEN_SECRET as Secret
@@ -13,19 +13,18 @@ describe("Product Handler", () => {
     name: "CodeMaster 3000",
     price: 999
   }
-  const stringifiedProduct: string = querystring.stringify(product as unknown as ParsedUrlQueryInput)
 
   let token: string, userId: number, productId: number
 
   beforeAll(async () => {
-    const stringifiedUser: string = querystring.stringify({
+    const userData: BaseAuthUser = {
       username: "produkttester",
       firstname: "Produkt",
       lastname: "Tester",
       password: "password123"
-    })
+    }
 
-    const {body} = await request.post(`/users/create?${stringifiedUser}`)
+    const {body} = await request.post("/users/create").send(userData)
 
     token = body
 
@@ -40,7 +39,8 @@ describe("Product Handler", () => {
 
   it("gets the create endpoint", (done) => {
     request
-    .post(`/products/create?${stringifiedProduct}`)
+    .post("/products/create")
+    .send(product)
     .set("Authorization", "bearer " + token)
     .then((res) => {
       const {body, status} = res
@@ -72,14 +72,15 @@ describe("Product Handler", () => {
   })
 
   it("gets the update endpoint", (done) => {
-    const stringifiedNewProduct: string = querystring.stringify({
+    const newProductData: BaseProduct = {
       ...product,
       name: "CodeMerge 156 A",
       price: 1299
-    })
+    }
 
     request
-    .put(`/products/${productId}?${stringifiedNewProduct}`)
+    .put(`/products/${productId}`)
+    .send(newProductData)
     .set("Authorization", "bearer " + token)
     .then((res) => {
       expect(res.status).toBe(200)

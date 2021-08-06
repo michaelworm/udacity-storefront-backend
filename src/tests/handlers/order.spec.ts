@@ -1,29 +1,30 @@
 import supertest from "supertest"
-import querystring, {ParsedUrlQueryInput} from "querystring"
 import jwt, {Secret} from "jsonwebtoken"
 
 import app from "../../server"
 import {BaseOrder} from "../../models/order"
+import {BaseAuthUser} from "../../models/user"
+import {BaseProduct} from "../../models/product"
 
 const request = supertest(app)
 const SECRET = process.env.TOKEN_SECRET as Secret
 
 describe("Order Handler", () => {
-  let token: string, order: BaseOrder, stringifiedOrder: string, user_id: number, product_id: number, order_id: number
+  let token: string, order: BaseOrder, user_id: number, product_id: number, order_id: number
 
   beforeAll(async () => {
-    const stringifiedUser: string = querystring.stringify({
+    const userData: BaseAuthUser = {
       username: "ordertester",
       firstname: "Order",
       lastname: "Tester",
       password: "password123"
-    })
-    const stringifiedProduct: string = querystring.stringify({
+    }
+    const productData: BaseProduct = {
       name: "CodeMaster 199",
       price: 199
-    })
+    }
 
-    const {body: userBody} = await request.post(`/users/create?${stringifiedUser}`)
+    const {body: userBody} = await request.post("/users/create").send(userData)
 
     token = userBody
 
@@ -31,16 +32,17 @@ describe("Order Handler", () => {
     const {user} = jwt.verify(token, SECRET)
     user_id = user.id
 
-    const {body: productBody} = await request.post(`/products/create?${stringifiedProduct}`).set("Authorization", "bearer " + token)
+    const {body: productBody} = await request.post("/products/create").set("Authorization", "bearer " + token).send(productData)
     product_id = productBody.id
 
     order = {
-      product_list: [product_id],
-      quantity: [5,11],
+      products: [{
+        product_id,
+        quantity: 5
+      }],
       user_id,
       status: true
     }
-    stringifiedOrder = querystring.stringify(order as unknown as ParsedUrlQueryInput)
   })
 
   afterAll(async () => {
@@ -50,7 +52,8 @@ describe("Order Handler", () => {
 
   it("gets the create endpoint", (done) => {
     request
-    .post(`/orders/create?${stringifiedOrder}`)
+    .post("/orders/create")
+    .send(order)
     .set("Authorization", "bearer " + token)
     .then((res) => {
       const {body, status} = res
@@ -84,13 +87,14 @@ describe("Order Handler", () => {
   })
 
   it("gets the update endpoint", (done) => {
-    const stringifiedNewOrder: string = querystring.stringify({
+    const newOrder: BaseOrder = {
       ...order,
       status: false
-    })
+    }
 
     request
-    .put(`/orders/${order_id}?${stringifiedNewOrder}`)
+    .put(`/orders/${order_id}`)
+    .send(newOrder)
     .set("Authorization", "bearer " + token)
     .then((res) => {
       expect(res.status).toBe(200)
