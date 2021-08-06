@@ -5,13 +5,6 @@ import {checkAuthHeader} from "./helpers"
 const OrderStoreInstance = new OrderStore()
 
 const index = async (req: Request, res: Response) => {
-  if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
-    res.status(401)
-    res.json("Access denied, invalid token")
-
-    return false
-  }
-
   try {
     const orders: Order[] = await OrderStoreInstance.index()
 
@@ -23,13 +16,6 @@ const index = async (req: Request, res: Response) => {
 }
 
 const create = async (req: Request, res: Response) => {
-  if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
-    res.status(401)
-    res.json("Access denied, invalid token")
-
-    return false
-  }
-
   try {
     let products = req.body.products as unknown as OrderProduct[]
     const status = req.body.status as unknown as boolean
@@ -51,13 +37,6 @@ const create = async (req: Request, res: Response) => {
 }
 
 const read = async (req: Request, res: Response) => {
-  if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
-    res.status(401)
-    res.json("Access denied, invalid token")
-
-    return false
-  }
-
   try {
     const id = req.params.id as unknown as number
 
@@ -77,13 +56,6 @@ const read = async (req: Request, res: Response) => {
 }
 
 const update = async (req: Request, res: Response) => {
-  if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
-    res.status(401)
-    res.json("Access denied, invalid token")
-
-    return false
-  }
-
   try {
     const id = req.params.id as unknown as number
     let products = req.body.products as unknown as OrderProduct[]
@@ -106,13 +78,6 @@ const update = async (req: Request, res: Response) => {
 }
 
 const deleteOrder = async (req: Request, res: Response) => {
-  if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
-    res.status(401)
-    res.json("Access denied, invalid token")
-
-    return false
-  }
-
   try {
     const id = req.params.id as unknown as number
 
@@ -132,9 +97,9 @@ const deleteOrder = async (req: Request, res: Response) => {
 }
 
 export default function orderRoutes (app: Application) {
-  app.get("/orders", index)
-  app.post("/orders/create", create)
-  app.get("/orders/:id", read)
-  app.put("/orders/:id", update)
-  app.delete("/orders/:id", deleteOrder)
+  app.get("/orders", checkAuthHeader, index)
+  app.post("/orders/create", checkAuthHeader, create)
+  app.get("/orders/:id", checkAuthHeader, read)
+  app.put("/orders/:id", checkAuthHeader, update)
+  app.delete("/orders/:id", checkAuthHeader, deleteOrder)
 }

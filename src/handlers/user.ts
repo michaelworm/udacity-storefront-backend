@@ -5,13 +5,6 @@ import {checkAuthHeader, getTokenByUser} from "./helpers"
 const UserStoreInstance = new UserStore()
 
 const index = async (req: Request, res: Response) => {
-  if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
-    res.status(401)
-    res.json("Access denied, invalid token")
-
-    return false
-  }
-
   try {
     const users: User[] = await UserStoreInstance.index()
 
@@ -45,13 +38,6 @@ const create = async (req: Request, res: Response) => {
 }
 
 const read = async (req: Request, res: Response) => {
-  if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
-    res.status(401)
-    res.json("Access denied, invalid token")
-
-    return false
-  }
-
   try {
     const id = req.params.id as unknown as number
 
@@ -71,13 +57,6 @@ const read = async (req: Request, res: Response) => {
 }
 
 const update = async (req: Request, res: Response) => {
-  if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
-    res.status(401)
-    res.json("Access denied, invalid token")
-
-    return false
-  }
-
   try {
     const id = req.params.id as unknown as number
     const firstname = req.body.firstname as unknown as string
@@ -99,14 +78,7 @@ const update = async (req: Request, res: Response) => {
 }
 
 const deleteUser = async (req: Request, res: Response) => {
-  if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
-    res.status(401)
-    res.json("Access denied, invalid token")
-
-    return false
-  }
-
-  try {
+   try {
     const id = req.params.id as unknown as number
 
     if (id === undefined) {
@@ -152,10 +124,10 @@ const authenticate = async (req: Request, res: Response) => {
 }
 
 export default function userRoutes (app: Application) {
-  app.get("/users", index)
+  app.get("/users", checkAuthHeader, index)
   app.post("/users/create", create)
-  app.get("/users/:id", read)
-  app.put("/users/:id", update)
-  app.delete("/users/:id", deleteUser)
+  app.get("/users/:id", checkAuthHeader, read)
+  app.put("/users/:id", checkAuthHeader, update)
+  app.delete("/users/:id", checkAuthHeader, deleteUser)
   app.post("/users/auth", authenticate)
 }

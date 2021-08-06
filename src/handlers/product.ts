@@ -16,18 +16,11 @@ const index = async (req: Request, res: Response) => {
 }
 
 const create = async (req: Request, res: Response) => {
-  if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
-    res.status(401)
-    res.json("Access denied, invalid token")
-
-    return false
-  }
-
   try {
     const name = req.body.name as unknown as string
     const price = req.body.price as unknown as number
 
-    if (name  === undefined || price  === undefined) {
+    if (name === undefined || price === undefined) {
       res.status(400)
       res.send("Some required parameters are missing! eg. :name, :price")
       return false
@@ -46,7 +39,7 @@ const read = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as unknown as number
 
-    if (id  === undefined) {
+    if (id === undefined) {
       res.status(400)
       res.send("Missing required parameter :id.")
       return false
@@ -62,13 +55,6 @@ const read = async (req: Request, res: Response) => {
 }
 
 const update = async (req: Request, res: Response) => {
-  if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
-    res.status(401)
-    res.json("Access denied, invalid token")
-
-    return false
-  }
-
   try {
     const id = req.params.id as unknown as number
     const name = req.body.name as unknown as string
@@ -90,13 +76,6 @@ const update = async (req: Request, res: Response) => {
 }
 
 const deleteProduct = async (req: Request, res: Response) => {
-  if (!req.headers.authorization || !checkAuthHeader(req.headers.authorization)) {
-    res.status(401)
-    res.json("Access denied, invalid token")
-
-    return false
-  }
-
   try {
     const id = req.params.id as unknown as number
 
@@ -117,8 +96,8 @@ const deleteProduct = async (req: Request, res: Response) => {
 
 export default function productRoutes (app: Application) {
   app.get("/products", index)
-  app.post("/products/create", create)
+  app.post("/products/create", checkAuthHeader, create)
   app.get("/products/:id", read)
-  app.put("/products/:id", update)
-  app.delete("/products/:id", deleteProduct)
+  app.put("/products/:id", checkAuthHeader, update)
+  app.delete("/products/:id", checkAuthHeader, deleteProduct)
 }
